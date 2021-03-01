@@ -6,6 +6,9 @@ int fourthPortalX, fourthPortalY;  // width, height/2
 float time;
 char gameOver, win;
 
+String textInput = " ";
+boolean start = false;
+
 // PC Variables
 int lives;
 int health;  // form 0 to 100
@@ -25,15 +28,31 @@ int minSpeed;
 
 // FUNCTIONS
 void settings() {
-  
+  // Window's size
+  size(1600, 900);
 }
 
 void setup() {
-  
+  // Black background
+  background(0);
 }
 
 void draw() {
-  
+  if (!start) {
+    text(textInput, width/2, height/2);
+  } else {
+  }
 }
 
-// EVENTS
+// EVENTS (callbacks)
+
+void keyPressed() {
+  text(textInput, width/2, height/2);
+  if (key == BACKSPACE)
+  {
+    textInput = "";
+    background(0);
+  } else {
+    textInput+=key;
+  }
+}
