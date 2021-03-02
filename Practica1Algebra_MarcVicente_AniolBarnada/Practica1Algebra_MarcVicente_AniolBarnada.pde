@@ -1,8 +1,12 @@
 // VARIABLES //<>// //<>// //<>// //<>// //<>//
-int startPortalX, startPortalY;
-int secondPortalX, secondPortalY;  // height/2
-int thirdPortalX, thirdPortalY;    // width/2
-int fourthPortalX, fourthPortalY;  // width, height/2
+float startPortalX, startPortalY;
+float secondPortalX, secondPortalY;  // height/2
+float thirdPortalX, thirdPortalY;    // width/2
+float fourthPortalX, fourthPortalY;  // width, height/2
+
+float topWidth, topHeight;
+float rightWidth, rightHeight;
+
 float time;
 char gameOver, win;
 
@@ -37,6 +41,26 @@ void settings() {
 void setup() {
   // Black background
   background(0);
+
+  //Set Portal Size
+  topWidth = 100;
+  topHeight = 20;
+  rightWidth = 20; 
+  rightHeight = 100;
+  
+  //Set Start Portal coords
+  startPortalX = width/2 - topWidth/2;
+  startPortalY = height - topHeight;
+  
+  //Set Exit Portal coords
+  secondPortalX = 0;
+  secondPortalY = height/2 - rightHeight/2;
+  
+  thirdPortalX = width/2 - topWidth/2;
+  thirdPortalY = 0;
+  
+  fourthPortalX = width - rightWidth;
+  fourthPortalY = height/2 - rightHeight/2;
 }
 
 void draw() {
@@ -54,6 +78,16 @@ void draw() {
       fill(0, 0, 255);
       ellipse(npcWanderersX[i], npcWanderersY[i], npcRadius, npcRadius);
     }
+
+    //Start Portal color and instance
+    fill(252, 250, 66); //Yellow
+    rect(startPortalX, startPortalY, topWidth, topHeight);
+
+    //Exit portals color and instance
+    fill(231, 36, 250); //Purple
+    rect(secondPortalX, secondPortalY, rightWidth, rightHeight);
+    rect(thirdPortalX, thirdPortalY, topWidth, topHeight);
+    rect(fourthPortalX, fourthPortalY, rightWidth, rightHeight);
   }
 }
 
