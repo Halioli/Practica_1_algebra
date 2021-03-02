@@ -6,8 +6,9 @@ int fourthPortalX, fourthPortalY;  // width, height/2
 float time;
 char gameOver, win;
 
-String textInput = " ";
+String textInput = "";
 boolean start = false;
+boolean result = false;
 
 // PC Variables
 int lives;
@@ -41,18 +42,47 @@ void draw() {
   if (!start) {
     text(textInput, width/2, height/2);
   } else {
+    
+    background(200);
   }
 }
 
 // EVENTS (callbacks)
 
 void keyPressed() {
-  text(textInput, width/2, height/2);
-  if (key == BACKSPACE)
-  {
-    textInput = "";
-    background(0);
-  } else {
-    textInput+=key;
+  if (!start) {
+    text(textInput, width/2, height/2);
+    if (key == BACKSPACE)
+    {
+      textInput = "";
+      background(0);
+    } else if (key == ENTER) {
+
+      if (isInteger(textInput)) {
+        n = Integer.parseInt(textInput);
+        println("ha funcionado "+n);
+        background(0);
+        delay(1000);
+        start = true;
+      } else {
+        println("messirve");
+        background(0);
+        text("Invalid input", width/2, height/2 -20);
+        textInput = "";
+      }
+    } else {
+      textInput+=key;
+    }
   }
+}
+
+boolean isInteger(String s) {
+  boolean result = false;
+  try {
+    Integer.parseInt(s);
+    result = true;
+  }
+  catch(NumberFormatException e) {
+  }
+  return result;
 }
