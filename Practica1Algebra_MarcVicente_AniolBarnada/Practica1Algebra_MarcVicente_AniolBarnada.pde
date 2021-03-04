@@ -16,10 +16,13 @@ boolean result = false;
 
 // PC Variables
 int lives;
-int health;  // form 0 to 100
-int pcSpeed;
+int health;  // fromm 0 to 100
+PVector pcSpeedV;
+PVector pcLocationV;
 int points;
 int powerUp;  // Boost speed, Freeze time, Heal 
+int pcRadius;
+boolean pcStartDrawn;
 
 // NPC Variables
 int n;  // Detemined by User Input
@@ -29,6 +32,7 @@ float[] npcWanderersX, npcWanderersY;  // 1/3 of n
 int maxSpeed;
 int minSpeed;
 int npcRadius = 8;
+
 
 // BOSS Variables
 
@@ -47,26 +51,36 @@ void setup() {
   topHeight = 20;
   rightWidth = 20; 
   rightHeight = 100;
-  
+
   //Set Start Portal coords
   startPortalX = width/2 - topWidth/2;
   startPortalY = height - topHeight;
-  
+
   //Set Exit Portal coords
   secondPortalX = 0;
   secondPortalY = height/2 - rightHeight/2;
-  
+
   thirdPortalX = width/2 - topWidth/2;
   thirdPortalY = 0;
-  
+
   fourthPortalX = width - rightWidth;
   fourthPortalY = height/2 - rightHeight/2;
+
+  //PC variable values
+  pcRadius = 12;
+  pcStartDrawn = true;
+  pcLocationV = new PVector(startPortalX + topWidth/2, startPortalY + topHeight/2);
+  pcSpeedV = new PVector(2.5, 5);
+
+  mouse = new PVector(mouseX, mouseY);
 }
 
 void draw() {
   if (!start) {
     text(textInput, width/2, height/2);
   } else {
+
+
 
     background(200);
 
@@ -88,6 +102,13 @@ void draw() {
     rect(secondPortalX, secondPortalY, rightWidth, rightHeight);
     rect(thirdPortalX, thirdPortalY, topWidth, topHeight);
     rect(fourthPortalX, fourthPortalY, rightWidth, rightHeight);
+
+    if (pcStartDrawn) {
+      //Starting draw PC
+      fill( 247, 163, 255);
+      ellipse(startPortalX + topWidth/2, startPortalY + topHeight/2, (float)pcRadius, pcRadius);
+      pcStartDrawn = false;
+    }
   }
 }
 
@@ -200,5 +221,11 @@ void SpawnEnemies(int numEnemies) {
       counter = 0;
       break;
     }
+  }
+}
+
+void mouseMoved() {
+  if (start && !pcStartDrawn) {
+    
   }
 }
