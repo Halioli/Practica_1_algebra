@@ -1,4 +1,4 @@
-// VARIABLES //<>// //<>// //<>// //<>// //<>// //<>// //<>// //<>// //<>// //<>// //<>// //<>// //<>// //<>//
+// VARIABLES // //<>//
 float startPortalX, startPortalY;
 float secondPortalX, secondPortalY;  // height/2
 float thirdPortalX, thirdPortalY;    // width/2
@@ -23,6 +23,7 @@ int pcRadius;
 float pcPositionX, pcPositionY;
 float pcSpeed = 2;
 boolean pcStartDrawn;
+boolean collidedTrigger = false;
 
 // NPC Variables
 int n;  // Detemined by User Input
@@ -36,6 +37,9 @@ int npcRadius = 8;
 float vectorXFollower, vectorYFollower;
 float moduloFollower;
 
+float vectorXRunner, vectorYRunner;
+float moduloRunner;
+int playerRadiusCollider;
 // BOSS Variables
 
 // FUNCTIONS
@@ -77,6 +81,9 @@ void setup() {
   //Set npcSpeed randomly
   maxSpeed = 3;
   minSpeed = 0.5;
+
+  //Set radius action runner
+  playerRadiusCollider = pcRadius + 60;
 }
 
 void draw() {
@@ -107,10 +114,14 @@ void draw() {
     if (pcStartDrawn) {
       //Starting draw PC
       fill( 247, 163, 255);
-      ellipse(pcPositionX, pcPositionY, (float)pcRadius, pcRadius);
+      ellipse(pcPositionX, pcPositionY, (float)pcRadius, (float)pcRadius);
+      noFill();
+      ellipse(pcPositionX, pcPositionY, playerRadiusCollider, playerRadiusCollider);
+
       pcStartDrawn = false;
     } else {
       movePCMouse();
+      moveNPCRunner();
       moveNPCFollower();
     }
   }
@@ -200,7 +211,7 @@ void SpawnEnemies(int numEnemies) {
       npcWanderersY[i] = (int)random(height/4);
       counter++;
       break;
-      
+
     case 2:
       npcFollowersX[i] = (int)random(width/4);
       npcFollowersY[i] = (int)random(height/4 * 3, height);
@@ -212,7 +223,7 @@ void SpawnEnemies(int numEnemies) {
       npcWanderersY[i] = (int)random(height/4 * 3, height);
       counter++;
       break;
-      
+
     case 3:
       npcFollowersX[i] = (int)random(width/4 * 3, width);
       npcFollowersY[i] = (int)random(height/4 * 3, height);
@@ -236,20 +247,39 @@ void SpawnEnemies(int numEnemies) {
 }
 
 void movePCMouse() {
+  /*NO FUNCIONA JUEPUTA MAMAUEBO
+  float[] distanceBetweenCenters;
+  float magnitudeOfVector;
+  distanceBetweenCenters = new float[2];
+
+
+  for (int counter = 0; counter < n; counter++) {
+    distanceBetweenCenters[0] = pcPositionX - npcRunnersX[counter];  //Vector coords.
+    distanceBetweenCenters[1] = pcPositionY - npcRunnersY[counter];  
+
+    magnitudeOfVector = sqrt(distanceBetweenCenters[0] * distanceBetweenCenters[0] + //Vector's module/distance
+      distanceBetweenCenters[1] * distanceBetweenCenters[1]); 
+
+    //There's collision if...
+    if (magnitudeOfVector < playerRadiusCollider + npcRadius) {
+      collidedTrigger = true;
+    }
+  }*/
+  
   //1- Evaluate a vector
   float vectorX, vectorY;
   vectorX = mouseX - pcPositionX;
   vectorY = mouseY - pcPositionY;
-  
+
   //2- Normalize the vector
   float modulo = sqrt(vectorX*vectorX + vectorY*vectorY);
   vectorX /= modulo; 
   vectorY /= modulo;
-  
+
   //3- Scale the vector
   vectorX *= pcSpeed; 
   vectorY *= pcSpeed;
-  
+
   //4- Move the enemy
   pcPositionX += vectorX;
   pcPositionY += vectorY;
@@ -263,7 +293,7 @@ void moveNPCFollower() {
     // Evaluate a vector
     vectorXFollower = pcPositionX - npcFollowersX[i];
     vectorYFollower = pcPositionY - npcFollowersY[i];
-    
+
     // Normalize the vector
     moduloFollower = sqrt(vectorXFollower * vectorXFollower + vectorYFollower * vectorYFollower);
 
@@ -271,7 +301,7 @@ void moveNPCFollower() {
     npcSpeed[i] = random(minSpeed, maxSpeed);
     vectorXFollower /= moduloFollower; 
     vectorYFollower /= moduloFollower;
-    
+
     //3- Scale the vector
     vectorXFollower *= npcSpeed[i]; 
     vectorYFollower *= npcSpeed[i];
@@ -279,9 +309,39 @@ void moveNPCFollower() {
     //4- Move the enemy
     npcFollowersX[i] += vectorXFollower;
     npcFollowersY[i] += vectorYFollower;
-    
+
     //5- Draw everything
     fill(255, 0, 0);
-    ellipse(npcFollowersX[i], npcFollowersY[i], 15, 15);
+    ellipse(npcFollowersX[i], npcFollowersY[i], npcRadius, npcRadius);
   }
+}
+
+void moveNPCRunner() {
+
+  //if (collidedTrigger) {
+    for (int i = 0; i < npcRunnersY.length; i++) {
+      // Evaluate a vector
+      vectorXRunner = pcPositionX - npcRunnersX[i];
+      vectorYRunner = pcPositionY - npcRunnersY[i];
+
+      // Normalize the vector
+      moduloRunner = sqrt(vectorXRunner * vectorXRunner + vectorYRunner * vectorYRunner);
+
+      //Initialize all the enemies speed
+      npcSpeed[i] = random(minSpeed, maxSpeed);
+      vectorXRunner /= moduloRunner; 
+      vectorYRunner /= moduloRunner;
+
+      //3- Scale the vector
+      vectorXRunner *= npcSpeed[i]; 
+      vectorYRunner *= npcSpeed[i];
+
+      //4- Move the enemy
+      npcRunnersX[i] -= vectorXRunner;
+      npcRunnersY[i] -= vectorYRunner;
+
+      //5- Draw everything
+      fill(0, 255, 0);
+      ellipse(npcRunnersX[i], npcRunnersY[i], npcRadius, npcRadius);
+    }
 }
