@@ -1,4 +1,4 @@
-// VARIABLES //<>// //<>// //<>// //<>// //<>//
+// VARIABLES //<>// //<>// //<>// //<>// //<>// //<>// //<>// //<>// //<>// //<>// //<>// //<>// //<>// //<>//
 float startPortalX, startPortalY;
 float secondPortalX, secondPortalY;  // height/2
 float thirdPortalX, thirdPortalY;    // width/2
@@ -17,11 +17,11 @@ boolean result = false;
 // PC Variables
 int lives;
 int health;  // fromm 0 to 100
-PVector pcSpeedV;
-PVector pcLocationV;
 int points;
 int powerUp;  // Boost speed, Freeze time, Heal 
 int pcRadius;
+float pcPositionX, pcPositionY;
+float pcSpeed = 2;
 boolean pcStartDrawn;
 
 // NPC Variables
@@ -29,9 +29,13 @@ int n;  // Detemined by User Input
 float[] npcFollowersX, npcFollowersY;  // 1/3 of n
 float[] npcRunnersX, npcRunnersY;    // 1/3 of n
 float[] npcWanderersX, npcWanderersY;  // 1/3 of n
-int maxSpeed;
-int minSpeed;
+float maxSpeed;
+float minSpeed;
+float[] npcSpeed;
 int npcRadius = 8;
+float vectorXFollower, vectorYFollower;
+float moduloFollower;
+
 
 
 // BOSS Variables
@@ -69,10 +73,12 @@ void setup() {
   //PC variable values
   pcRadius = 12;
   pcStartDrawn = true;
-  pcLocationV = new PVector(startPortalX + topWidth/2, startPortalY + topHeight/2);
-  pcSpeedV = new PVector(2.5, 5);
+  pcPositionX = startPortalX + topWidth/2;
+  pcPositionY = startPortalY + topHeight/2;
 
-  mouse = new PVector(mouseX, mouseY);
+  //Set npcSpeed randomly
+  maxSpeed = 4;
+  minSpeed = 1;
 }
 
 void draw() {
@@ -106,8 +112,11 @@ void draw() {
     if (pcStartDrawn) {
       //Starting draw PC
       fill( 247, 163, 255);
-      ellipse(startPortalX + topWidth/2, startPortalY + topHeight/2, (float)pcRadius, pcRadius);
+      ellipse(pcPositionX, pcPositionY, (float)pcRadius, pcRadius);
       pcStartDrawn = false;
+    } else {
+      movePCMouse();
+      moveNPCFollower();
     }
   }
 }
@@ -224,8 +233,49 @@ void SpawnEnemies(int numEnemies) {
   }
 }
 
-void mouseMoved() {
-  if (start && !pcStartDrawn) {
-    
+void movePCMouse() {
+  //1- Evaluate a vector
+  float vectorX, vectorY;
+  vectorX = mouseX-pcPositionX;
+  vectorY = mouseY-pcPositionY;
+  //2- Normalize the vector
+  float modulo = sqrt(vectorX*vectorX + vectorY*vectorY);
+  vectorX/=modulo; 
+  vectorY/=modulo;
+  //3- Scale the vector
+  vectorX*=pcSpeed; 
+  vectorY*=pcSpeed;
+  //4- Move the enemy
+  pcPositionX += vectorX;
+  pcPositionY += vectorY;
+
+  //5- Draw everything
+  ellipse(pcPositionX, pcPositionY, 15, 15);
+}
+
+void moveNPCFollower() {
+
+
+  for (int i=0; i < npcFollowersY.length; i++) {
+    // Evaluate a vector
+    vectorXFollower = pcPositionX-npcFollowersX[i];
+    vectorYFollower = pcPositionY-npcFollowersY[i];
+    // Normalize the vector
+    moduloFollower = sqrt(vectorXFollower*vectorXFollower + vectorYFollower*vectorYFollower);
+
+    //Initialize all the enemies speed
+    npcSpeed[i] = random(minSpeed, maxSpeed);
+    vectorXFollower/=moduloFollower; 
+    vectorYFollower/=moduloFollower;
+    //3- Scale the vector
+    vectorXFollower*=npcSpeed[i]; 
+    vectorYFollower*=npcSpeed[i];
+
+    //4- Move the enemy
+    npcFollowersX[i] += vectorXFollower;
+    npcFollowersY[i] += vectorYFollower;
+    //5- Draw everything
+    fill(255, 0, 0);
+    ellipse(npcFollowersX[i], npcFollowersY[i], 15, 15);
   }
 }
