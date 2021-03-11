@@ -112,7 +112,7 @@ void setup() {
   minSpeed = 0.5;
 
   // Set radius action runner
-  playerRadiusCollider = player[0].pcRadius + 60;
+  playerRadiusCollider = player[0].pcRadius + 200;
 
   // Set text size
   textSize(26);
@@ -340,9 +340,7 @@ void SpawnEnemies(int numEnemies) {
 
 // Player mouse movement
 void mouseDragged() {
-  float[] distanceBetweenCenters;
-  float magnitudeOfVector;
-  distanceBetweenCenters = new float[2];
+
 
   if (!pcStartDrawn && (state != 4 || state != 5)) {
     // 1- Evaluate a vector
@@ -367,7 +365,7 @@ void mouseDragged() {
     fill(251, 208, 255);
     ellipse(player[0].pcPosition.x, player[0].pcPosition.y, 15, 15);
 
-    for (int counter = 0; counter < npcRunnersX.length; counter++) {
+    /*for (int counter = 0; counter < npcRunnersX.length; counter++) {
       distanceBetweenCenters[0] = player[0].pcPosition.x - npcRunnersX[counter];  //Vector coords.
       distanceBetweenCenters[1] = player[0].pcPosition.y - npcRunnersY[counter];  
 
@@ -378,7 +376,7 @@ void mouseDragged() {
       if (magnitudeOfVector < playerRadiusCollider + npcRadius) {
         collidedTrigger = true;
       }
-    }
+    }*/
   }
 }
 
@@ -412,7 +410,25 @@ void moveNPCFollower() {
 }
 
 void moveNPCRunner() {
+
+  float[] distanceBetweenCenters;
+  float magnitudeOfVector;
+  distanceBetweenCenters = new float[2];
+
   for (int i = 0; i < npcRunnersY.length; i++) {
+    distanceBetweenCenters[0] = player[0].pcPosition.x - npcRunnersX[i];  //Vector coords.
+    distanceBetweenCenters[1] = player[0].pcPosition.y - npcRunnersY[i];  
+
+    magnitudeOfVector = sqrt(distanceBetweenCenters[0] * distanceBetweenCenters[0] + //Vector's module/distance
+      distanceBetweenCenters[1] * distanceBetweenCenters[1]); 
+
+    // There's collision if...
+    if (magnitudeOfVector < playerRadiusCollider + npcRadius) {
+      collidedTrigger = true;
+    }else{
+     collidedTrigger = false; 
+    }
+    
     if (collidedTrigger) {
       // Evaluate a vector
       vectorXRunner = player[0].pcPosition.x - npcRunnersX[i];
@@ -515,7 +531,7 @@ class NpcFollower {
   float moduloFollower;
   PVector npcFollowersPosition;
   PVector vectorFollower;
-  
+
   NpcFollower (float coordX, float coordY) {
     npcRadius = 8;
     npcFollowersPosition = new PVector(coordX, coordY);
