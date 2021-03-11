@@ -7,6 +7,7 @@ float fourthPortalX, fourthPortalY;  // width, height/2
 float topWidth, topHeight;
 float rightWidth, rightHeight;
 
+// User Input
 String textInput = "";
 boolean result = false;
 int state;
@@ -49,7 +50,8 @@ String  winMessage = "You win";
 
 // BOSS Variables
 
-// FUNCTIONS
+// FUNCTIONS //
+// ===================================================
 void settings() {
   // Window's size
   size(1600, 900);
@@ -100,6 +102,8 @@ void setup() {
   textSize(26);
 }
 
+// DRAW
+// ===================================================
 void draw() {
 
   switch(state) {
@@ -107,7 +111,7 @@ void draw() {
   case 0:
     text(textInput, width/2, height/2);
     break;
-    
+
     //First scene
   case 1:
     background(200);
@@ -125,13 +129,13 @@ void draw() {
     fill(0);
     text(time, 20, 40);
     text("Lives: "+lives, 20, height - 40);
-    
+
     fill(0);
     rect(width - 150, height - 35, 100, 30);
-    fill(0,255,0);
+    fill(0, 255, 0);
     rect(width - 150, height - 35, health, 30);
-    
-    
+
+
     //Spawn NPC's intial positions
     for (int i = 0; i < n/3; i++) {
       fill(255, 0, 0);
@@ -154,14 +158,13 @@ void draw() {
 
     //Starting draw PC
     if (pcStartDrawn) {
-      
+
       fill( 247, 163, 255);
       ellipse(pcPositionX, pcPositionY, (float)pcRadius, (float)pcRadius);
       noFill();
       ellipse(pcPositionX, pcPositionY, playerRadiusCollider, playerRadiusCollider);
 
       pcStartDrawn = false;
-      
     } else {      
       ellipse(pcPositionX, pcPositionY, 15, 15);
       moveNPCRunner();
@@ -173,7 +176,7 @@ void draw() {
     //Boss battle state code  
     break;
 
-//Lose Screen
+    //Lose Screen
   case 4:
     background(0);
     fill(255);
@@ -181,7 +184,7 @@ void draw() {
     text(gameOverMessage, width/2, height/2);
     break;
 
-//Win Screen
+    //Win Screen
   case 5:
     background(0);
     fill(255);
@@ -196,10 +199,8 @@ void draw() {
   }
 }
 
-
-
-// EVENTS (callbacks)
-
+// EVENTS (callbacks) //
+// ===================================================
 void keyPressed() {
   if (state == 0) {
     text(textInput, width/2, height/2);
@@ -240,7 +241,6 @@ boolean isInteger(String s) {
 }
 
 void SpawnEnemies(int numEnemies) {
-
   //int remainder = numEnemies % 3;
   numEnemies /= 3;
 
@@ -318,13 +318,10 @@ void SpawnEnemies(int numEnemies) {
 }
 
 void mouseDragged() {
-
   //NO FUNCIONA JUEPUTA MAMAUEBO
   float[] distanceBetweenCenters;
   float magnitudeOfVector;
   distanceBetweenCenters = new float[2];
-
-
 
   if (!pcStartDrawn && (state != 4 || state != 5)) {
     //1- Evaluate a vector
@@ -393,8 +390,6 @@ void moveNPCFollower() {
 }
 
 void moveNPCRunner() {
-
-
   for (int i = 0; i < npcRunnersY.length; i++) {
     if (collidedTrigger) {
       // Evaluate a vector
