@@ -17,6 +17,9 @@ boolean result = false;
 int state;
 
 // PC Variables
+boolean pcStartDrawn;
+boolean collidedTrigger = false;
+Player[] player = new Player[1];
 /*int lives;
  int health;  // fromm 0 to 100
  int points;
@@ -24,12 +27,13 @@ int state;
  int pcRadius;
  float pcPositionX, pcPositionY;
  float pcSpeed = 2; */
-boolean pcStartDrawn;
-boolean collidedTrigger = false;
-Player[] player = new Player[1];
 
 // NPC Variables
 int n;  // Detemined by User Input
+//Player[] npcFollowers = new Player[n/3];
+//Player[] npcRunners = new Player[n/3];
+//Player[] npcWanderers = new Player[n/3];
+
 float[] npcFollowersX, npcFollowersY;  // 1/3 of n
 float[] npcRunnersX, npcRunnersY;      // 1/3 of n
 float[] npcWanderersX, npcWanderersY;  // 1/3 of n
@@ -489,14 +493,32 @@ class Player {
   void display() {
     if (pcStartDrawn) {
       fill( 247, 163, 255);
-      ellipse(player[0].pcPosition.x, player[0].pcPosition.y, player[0].pcRadius, player[0].pcRadius);
+      ellipse(pcPosition.x, pcPosition.y, pcRadius, pcRadius);
       noFill();
-      ellipse(player[0].pcPosition.x, player[0].pcPosition.y, playerRadiusCollider, playerRadiusCollider);
+      ellipse(pcPosition.x, pcPosition.y, playerRadiusCollider, playerRadiusCollider);
       pcStartDrawn = false;
     } else {      
-      ellipse(player[0].pcPosition.x, player[0].pcPosition.y, 15, 15);
+      ellipse(pcPosition.x, pcPosition.y, 15, 15);
       moveNPCRunner();
       moveNPCFollower();
     }
+  }
+
+  void update() {
+    // Do stuff
+  }
+}
+
+class NpcFollower {
+  int npcRadius;
+  float npcSpeed;
+  float moduloFollower;
+  PVector npcFollowersPosition;
+  PVector vectorFollower;
+  
+  NpcFollower (float coordX, float coordY) {
+    npcRadius = 8;
+    npcFollowersPosition = new PVector(coordX, coordY);
+    vectorFollower = new PVector(player[0].pcPosition.x, player[0].pcPosition.y);
   }
 }
