@@ -1,8 +1,11 @@
 // VARIABLES // //<>//
+
+// Portal
 float startPortalX, startPortalY;
 float secondPortalX, secondPortalY;  // height/2
 float thirdPortalX, thirdPortalY;    // width/2
 float fourthPortalX, fourthPortalY;  // width, height/2
+int exitPortal;
 
 float topWidth, topHeight;
 float rightWidth, rightHeight;
@@ -26,7 +29,7 @@ boolean collidedTrigger = false;
 // NPC Variables
 int n;  // Detemined by User Input
 float[] npcFollowersX, npcFollowersY;  // 1/3 of n
-float[] npcRunnersX, npcRunnersY;    // 1/3 of n
+float[] npcRunnersX, npcRunnersY;      // 1/3 of n
 float[] npcWanderersX, npcWanderersY;  // 1/3 of n
 float maxSpeed;
 float minSpeed;
@@ -40,9 +43,9 @@ float moduloRunner;
 int playerRadiusCollider;
 
 //Timer variables
-String time = "005";
+String time = "102";
 int t;
-int interval = 5;
+int interval = 102;
 
 //Message Win/Lose strings
 String gameOverMessage = "You lose";
@@ -60,45 +63,51 @@ void settings() {
 void setup() {
   // Black background
   background(0);
+  
+  // Set rectangle mode
+  rectMode(CENTER);
 
-  //Set Portal Size
+  // Set Portal Size
   topWidth = 100;
   topHeight = 20;
   rightWidth = 20; 
   rightHeight = 100;
 
-  //Set Start Portal coords
-  startPortalX = width/2 - topWidth/2;
+  // Set Start Portal coords
+  startPortalX = width/2;
   startPortalY = height - topHeight;
 
-  //Set Exit Portal coords
-  secondPortalX = 0;
+  // Set Exit Portal coords
+  secondPortalX = rightWidth/2;
   secondPortalY = height/2 - rightHeight/2;
 
-  thirdPortalX = width/2 - topWidth/2;
-  thirdPortalY = 0;
+  thirdPortalX = width/2;
+  thirdPortalY = topHeight/2;
 
-  fourthPortalX = width - rightWidth;
+  fourthPortalX = width - rightWidth/2;
   fourthPortalY = height/2 - rightHeight/2;
+  
+  // Set exit portal
+  exitPortal = (int)random(0, 2);
 
-  //PC variable values
+  // PC variable values
   pcRadius = 12;
   pcStartDrawn = true;
-  pcPositionX = startPortalX + topWidth/2;
-  pcPositionY = startPortalY + topHeight/2;
+  pcPositionX = startPortalX;
+  pcPositionY = startPortalY;
   health = 100;
 
-  //Set npcSpeed randomly
+  // Set npcSpeed randomly
   maxSpeed = 3;
   minSpeed = 0.5;
 
-  //Set radius action runner
+  // Set radius action runner
   playerRadiusCollider = pcRadius + 60;
 
-  //Set lives
+  // Set lives
   lives = 3;
 
-  //Set text size
+  // Set text size
   textSize(26);
 }
 
@@ -107,36 +116,38 @@ void setup() {
 void draw() {
 
   switch(state) {
-    //Choose Enemies(n) Screen
+    // Choose Enemies(n) Screen
   case 0:
     text(textInput, width/2, height/2);
     break;
 
-    //First scene
+    // First scene
   case 1:
     background(200);
 
-    //Timer
+    // Timer
     t = interval - int(millis()/1000);
     time = nf(t, 3);
     if (t == 0) {
       lives--;
-      interval += 5;
+      interval += 100;
     } else if (lives == 0)
     {
       state = 4;
     }
     fill(0);
     text(time, 20, 40);
+
+    // Nº lives text
     text("Lives: "+lives, 20, height - 40);
 
+    // Health bar
     fill(0);
     rect(width - 150, height - 35, 100, 30);
     fill(0, 255, 0);
     rect(width - 150, height - 35, health, 30);
 
-
-    //Spawn NPC's intial positions
+    // Spawn NPC's intial positions
     for (int i = 0; i < n/3; i++) {
       fill(255, 0, 0);
       ellipse(npcFollowersX[i], npcFollowersY[i], npcRadius, npcRadius);
@@ -146,24 +157,22 @@ void draw() {
       ellipse(npcWanderersX[i], npcWanderersY[i], npcRadius, npcRadius);
     }
 
-    //Start Portal color and instance
-    fill(252, 250, 66); //Yellow
+    // Start Portal color and instance
+    fill(252, 250, 66); // Yellow
     rect(startPortalX, startPortalY, topWidth, topHeight);
 
-    //Exit portals color and instance
-    fill(231, 36, 250); //Purple
+    // Exit portals color and instance
+    fill(231, 36, 250); // Purple
     rect(secondPortalX, secondPortalY, rightWidth, rightHeight);
     rect(thirdPortalX, thirdPortalY, topWidth, topHeight);
     rect(fourthPortalX, fourthPortalY, rightWidth, rightHeight);
 
-    //Starting draw PC
+    // Starting draw PC
     if (pcStartDrawn) {
-
       fill( 247, 163, 255);
       ellipse(pcPositionX, pcPositionY, (float)pcRadius, (float)pcRadius);
       noFill();
       ellipse(pcPositionX, pcPositionY, playerRadiusCollider, playerRadiusCollider);
-
       pcStartDrawn = false;
     } else {      
       ellipse(pcPositionX, pcPositionY, 15, 15);
@@ -173,19 +182,19 @@ void draw() {
     break;
 
   case 3:  
-    //Boss battle state code  
+    // Boss battle state code  
     break;
 
-    //Lose Screen
   case 4:
+    // Lose Screen
     background(0);
     fill(255);
     textSize(40);
     text(gameOverMessage, width/2, height/2);
     break;
 
-    //Win Screen
   case 5:
+    // Win Screen
     background(0);
     fill(255);
     textSize(40);
@@ -193,7 +202,7 @@ void draw() {
     break;
 
   default:
-    //Something went wrong code
+    // Something went wrong code
     text("Something went wrong", width/2, height/2);
     break;
   }
@@ -318,31 +327,30 @@ void SpawnEnemies(int numEnemies) {
 }
 
 void mouseDragged() {
-  //NO FUNCIONA JUEPUTA MAMAUEBO
   float[] distanceBetweenCenters;
   float magnitudeOfVector;
   distanceBetweenCenters = new float[2];
 
   if (!pcStartDrawn && (state != 4 || state != 5)) {
-    //1- Evaluate a vector
+    // 1- Evaluate a vector
     float vectorX, vectorY;
     vectorX = mouseX - pcPositionX;
     vectorY = mouseY - pcPositionY;
 
-    //2- Normalize the vector
+    // 2- Normalize the vector
     float modulo = sqrt(vectorX*vectorX + vectorY*vectorY);
     vectorX /= modulo; 
     vectorY /= modulo;
 
-    //3- Scale the vector
+    // 3- Scale the vector
     vectorX *= pcSpeed; 
     vectorY *= pcSpeed;
 
-    //4- Move the enemy
+    // 4- Move the enemy
     pcPositionX += vectorX;
     pcPositionY += vectorY;
 
-    //5- Draw everything
+    // 5- Draw everything
     fill(251, 208, 255);
     ellipse(pcPositionX, pcPositionY, 15, 15);
 
@@ -353,7 +361,7 @@ void mouseDragged() {
       magnitudeOfVector = sqrt(distanceBetweenCenters[0] * distanceBetweenCenters[0] + //Vector's module/distance
         distanceBetweenCenters[1] * distanceBetweenCenters[1]); 
 
-      //There's collision if...
+      // There's collision if...
       if (magnitudeOfVector < playerRadiusCollider + npcRadius) {
         collidedTrigger = true;
       }
@@ -370,20 +378,20 @@ void moveNPCFollower() {
     // Normalize the vector
     moduloFollower = sqrt(vectorXFollower * vectorXFollower + vectorYFollower * vectorYFollower);
 
-    //Initialize all the enemies speed
+    // Initialize all the enemies speed
     npcSpeed[i] = random(minSpeed, maxSpeed);
     vectorXFollower /= moduloFollower; 
     vectorYFollower /= moduloFollower;
 
-    //3- Scale the vector
+    // 3- Scale the vector
     vectorXFollower *= npcSpeed[i]; 
     vectorYFollower *= npcSpeed[i];
 
-    //4- Move the enemy
+    // 4- Move the enemy
     npcFollowersX[i] += vectorXFollower;
     npcFollowersY[i] += vectorYFollower;
 
-    //5- Draw everything
+    // 5- Draw everything
     fill(255, 0, 0);
     ellipse(npcFollowersX[i], npcFollowersY[i], npcRadius, npcRadius);
   }
@@ -399,25 +407,25 @@ void moveNPCRunner() {
       // Normalize the vector
       moduloRunner = sqrt(vectorXRunner * vectorXRunner + vectorYRunner * vectorYRunner);
 
-      //Initialize all the enemies speed
+      // Initialize all the enemies speed
       npcSpeed[i] = random(minSpeed, maxSpeed);
       vectorXRunner /= moduloRunner; 
       vectorYRunner /= moduloRunner;
 
-      //3- Scale the vector
+      // 3- Scale the vector
       vectorXRunner *= npcSpeed[i]; 
       vectorYRunner *= npcSpeed[i];
 
-      //4- Move the enemy
+      // 4- Move the enemy
       npcRunnersX[i] -= vectorXRunner;
       npcRunnersY[i] -= vectorYRunner;
 
-      //5- Draw everything
+      // 5- Draw everything
       fill(0, 255, 0);
       ellipse(npcRunnersX[i], npcRunnersY[i], npcRadius, npcRadius);
       text("YES :)", 20, 380);
     } else {
-      text("NO :)", 20, 380);
+      text("NO  :(", 20, 380);
       fill(0, 255, 0);
       ellipse(npcRunnersX[i], npcRunnersY[i], npcRadius, npcRadius);
     }
