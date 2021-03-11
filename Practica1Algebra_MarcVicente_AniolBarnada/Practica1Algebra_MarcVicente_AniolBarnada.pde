@@ -5,7 +5,8 @@ float startPortalX, startPortalY;
 float secondPortalX, secondPortalY;  // height/2
 float thirdPortalX, thirdPortalY;    // width/2
 float fourthPortalX, fourthPortalY;  // width, height/2
-int exitPortal;
+int bossPortal;
+Portal[] exitPortals = new Portal[3];
 
 float topWidth, topHeight;
 float rightWidth, rightHeight;
@@ -16,15 +17,16 @@ boolean result = false;
 int state;
 
 // PC Variables
-int lives;
-int health;  // fromm 0 to 100
-int points;
-int powerUp;  // Boost speed, Freeze time, Heal 
-int pcRadius;
-float pcPositionX, pcPositionY;
-float pcSpeed = 2;
+/*int lives;
+ int health;  // fromm 0 to 100
+ int points;
+ int powerUp;  // Boost speed, Freeze time, Heal 
+ int pcRadius;
+ float pcPositionX, pcPositionY;
+ float pcSpeed = 2; */
 boolean pcStartDrawn;
 boolean collidedTrigger = false;
+Player[] player = new Player[1];
 
 // NPC Variables
 int n;  // Detemined by User Input
@@ -64,7 +66,7 @@ void settings() {
 void setup() {
   // Black background
   background(0);
-  
+
   // Set rectangle mode
   rectMode(CENTER);
 
@@ -78,7 +80,7 @@ void setup() {
   startPortalX = width/2;
   startPortalY = height - topHeight;
 
-  // Set Exit Portal coords
+  // Set exit portal coords
   secondPortalX = rightWidth/2;
   secondPortalY = height/2 - rightHeight/2;
 
@@ -87,26 +89,26 @@ void setup() {
 
   fourthPortalX = width - rightWidth/2;
   fourthPortalY = height/2 - rightHeight/2;
-  
+
   // Set exit portal
-  exitPortal = (int)random(0, 2);
+  bossPortal = (int)random(0, 2);
+
+  // Instantiate portals
+  exitPortals[0] = new Portal(secondPortalX, secondPortalY, false);
+  exitPortals[1] = new Portal(thirdPortalX, thirdPortalY, true);
+  exitPortals[2] = new Portal(fourthPortalX, fourthPortalY, false);
+  exitPortals[bossPortal].bossPortal = true;
 
   // PC variable values
-  pcRadius = 12;
+  player[0] = new Player(startPortalX, startPortalY);
   pcStartDrawn = true;
-  pcPositionX = startPortalX;
-  pcPositionY = startPortalY;
-  health = 100;
 
-  // Set npcSpeed randomly
+  // Set npcSpeed
   maxSpeed = 3;
   minSpeed = 0.5;
 
   // Set radius action runner
-  playerRadiusCollider = pcRadius + 60;
-
-  // Set lives
-  lives = 3;
+  playerRadiusCollider = player[0].pcRadius + 60;
 
   // Set text size
   textSize(26);
@@ -130,9 +132,9 @@ void draw() {
     t = interval - int(millis()/1000);
     time = nf(t, 3);
     if (t == 0) {
-      lives--;
+      player[0].lives--;
       interval += 100;
-    } else if (lives == 0)
+    } else if (player[0].lives == 0)
     {
       state = 4;
     }
@@ -140,13 +142,13 @@ void draw() {
     text(time, 20, 40);
 
     // Nº lives
-    text("Lives: "+lives, 20, height - 40);
+    text("Lives: " + player[0].lives, 20, height - 40);
 
     // Health bar
     fill(0);
     rect(width - 150, height - 35, 100, 30);
     fill(0, 255, 0);
-    rect(width - 150, height - 35, health, 30);
+    rect(width - 150, height - 35, player[0].health, 30);
 
     // Spawn NPC's intial positions
     for (int i = 0; i < n/3; i++) {
@@ -163,23 +165,27 @@ void draw() {
     rect(startPortalX, startPortalY, topWidth, topHeight);
 
     // Exit portals color and instance
-    fill(231, 36, 250); // Purple
-    rect(secondPortalX, secondPortalY, rightWidth, rightHeight);
-    rect(thirdPortalX, thirdPortalY, topWidth, topHeight);
-    rect(fourthPortalX, fourthPortalY, rightWidth, rightHeight);
+    for (int i = 0; i < 3; i++) {
+      exitPortals[i].display();
+    }
+    /*fill(231, 36, 250); // Purple
+     rect(secondPortalX, secondPortalY, rightWidth, rightHeight);
+     rect(thirdPortalX, thirdPortalY, topWidth, topHeight);
+     rect(fourthPortalX, fourthPortalY, rightWidth, rightHeight);*/
 
     // Starting draw PC
-    if (pcStartDrawn) {
-      fill( 247, 163, 255);
-      ellipse(pcPositionX, pcPositionY, (float)pcRadius, (float)pcRadius);
-      noFill();
-      ellipse(pcPositionX, pcPositionY, playerRadiusCollider, playerRadiusCollider);
-      pcStartDrawn = false;
-    } else {      
-      ellipse(pcPositionX, pcPositionY, 15, 15);
-      moveNPCRunner();
-      moveNPCFollower();
-    }
+    player[0].display();
+    /*if (pcStartDrawn) {
+     fill( 247, 163, 255);
+     ellipse(player[0].pcPosition.x, player[0].pcPosition.y, player[0].pcRadius, player[0].pcRadius);
+     noFill();
+     ellipse(player[0].pcPosition.x, player[0].pcPosition.y, playerRadiusCollider, playerRadiusCollider);
+     pcStartDrawn = false;
+     } else {      
+     ellipse(player[0].pcPosition.x, player[0].pcPosition.y, 15, 15);
+     moveNPCRunner();
+     moveNPCFollower();
+     }*/
     break;
 
   case 3:  
@@ -337,8 +343,8 @@ void mouseDragged() {
   if (!pcStartDrawn && (state != 4 || state != 5)) {
     // 1- Evaluate a vector
     float vectorX, vectorY;
-    vectorX = mouseX - pcPositionX;
-    vectorY = mouseY - pcPositionY;
+    vectorX = mouseX - player[0].pcPosition.x;
+    vectorY = mouseY - player[0].pcPosition.y;
 
     // 2- Normalize the vector
     float modulo = sqrt(vectorX*vectorX + vectorY*vectorY);
@@ -346,20 +352,20 @@ void mouseDragged() {
     vectorY /= modulo;
 
     // 3- Scale the vector
-    vectorX *= pcSpeed; 
-    vectorY *= pcSpeed;
+    vectorX *= player[0].pcSpeed; 
+    vectorY *= player[0].pcSpeed;
 
     // 4- Move the enemy
-    pcPositionX += vectorX;
-    pcPositionY += vectorY;
+    player[0].pcPosition.x += vectorX;
+    player[0].pcPosition.y += vectorY;
 
     // 5- Draw everything
     fill(251, 208, 255);
-    ellipse(pcPositionX, pcPositionY, 15, 15);
+    ellipse(player[0].pcPosition.x, player[0].pcPosition.y, 15, 15);
 
     for (int counter = 0; counter < npcRunnersX.length; counter++) {
-      distanceBetweenCenters[0] = pcPositionX - npcRunnersX[counter];  //Vector coords.
-      distanceBetweenCenters[1] = pcPositionY - npcRunnersY[counter];  
+      distanceBetweenCenters[0] = player[0].pcPosition.x - npcRunnersX[counter];  //Vector coords.
+      distanceBetweenCenters[1] = player[0].pcPosition.y - npcRunnersY[counter];  
 
       magnitudeOfVector = sqrt(distanceBetweenCenters[0] * distanceBetweenCenters[0] + //Vector's module/distance
         distanceBetweenCenters[1] * distanceBetweenCenters[1]); 
@@ -376,8 +382,8 @@ void mouseDragged() {
 void moveNPCFollower() {
   for (int i = 0; i < npcFollowersY.length; i++) {
     // Evaluate a vector
-    vectorXFollower = pcPositionX - npcFollowersX[i];
-    vectorYFollower = pcPositionY - npcFollowersY[i];
+    vectorXFollower = player[0].pcPosition.x - npcFollowersX[i];
+    vectorYFollower = player[0].pcPosition.y - npcFollowersY[i];
 
     // Normalize the vector
     moduloFollower = sqrt(vectorXFollower * vectorXFollower + vectorYFollower * vectorYFollower);
@@ -405,8 +411,8 @@ void moveNPCRunner() {
   for (int i = 0; i < npcRunnersY.length; i++) {
     if (collidedTrigger) {
       // Evaluate a vector
-      vectorXRunner = pcPositionX - npcRunnersX[i];
-      vectorYRunner = pcPositionY - npcRunnersY[i];
+      vectorXRunner = player[0].pcPosition.x - npcRunnersX[i];
+      vectorYRunner = player[0].pcPosition.y - npcRunnersY[i];
 
       // Normalize the vector
       moduloRunner = sqrt(vectorXRunner * vectorXRunner + vectorYRunner * vectorYRunner);
@@ -437,3 +443,60 @@ void moveNPCRunner() {
 }
 
 // Classes
+class Portal {
+  PVector location;
+  boolean topPortal;
+  boolean bossPortal;
+
+  Portal (float coordX, float coordY, boolean isTop) {
+    location = new PVector(coordX, coordY);
+    topPortal = isTop;
+  }
+
+  void display() {
+    // Exit portals color and instance
+    fill(231, 36, 250); // Purple
+    if (topPortal) {
+      rect(location.x, location.y, topWidth, topHeight);
+    } else {
+      rect(location.x, location.y, rightWidth, rightHeight);
+    }
+  }
+
+  void update() {
+    // Look collisions
+  }
+}
+
+class Player {
+  int lives;
+  int health;
+  int points;
+  int pcRadius;
+  float pcSpeed;
+  PVector pcPosition;
+  boolean collidedTrigger = false;
+
+  Player (float coordX, float coordY) {
+    lives = 3;
+    health = 100;
+    points = 0; 
+    pcRadius = 12;
+    pcSpeed = 2;
+    pcPosition = new PVector(coordX, coordY);
+  }
+
+  void display() {
+    if (pcStartDrawn) {
+      fill( 247, 163, 255);
+      ellipse(player[0].pcPosition.x, player[0].pcPosition.y, player[0].pcRadius, player[0].pcRadius);
+      noFill();
+      ellipse(player[0].pcPosition.x, player[0].pcPosition.y, playerRadiusCollider, playerRadiusCollider);
+      pcStartDrawn = false;
+    } else {      
+      ellipse(player[0].pcPosition.x, player[0].pcPosition.y, 15, 15);
+      moveNPCRunner();
+      moveNPCFollower();
+    }
+  }
+}
