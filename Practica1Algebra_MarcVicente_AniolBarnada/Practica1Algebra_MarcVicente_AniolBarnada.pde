@@ -20,20 +20,9 @@ int state;
 boolean pcStartDrawn;
 boolean collidedTrigger = false;
 Player[] player = new Player[1];
-/*int lives;
- int health;  // fromm 0 to 100
- int points;
- int powerUp;  // Boost speed, Freeze time, Heal 
- int pcRadius;
- float pcPositionX, pcPositionY;
- float pcSpeed = 2; */
 
 // NPC Variables
 int n;  // Detemined by User Input
-//Player[] npcFollowers = new Player[n/3];
-//Player[] npcRunners = new Player[n/3];
-//Player[] npcWanderers = new Player[n/3];
-
 float[] npcFollowersX, npcFollowersY;  // 1/3 of n
 float[] npcRunnersX, npcRunnersY;      // 1/3 of n
 float[] npcWanderersX, npcWanderersY;  // 1/3 of n
@@ -43,7 +32,6 @@ float[] npcSpeed;
 int npcRadius = 8;
 float vectorXFollower, vectorYFollower;
 float moduloFollower;
-
 float vectorXRunner, vectorYRunner;
 float moduloRunner;
 int playerRadiusCollider;
@@ -106,6 +94,9 @@ void setup() {
   // PC variable values
   player[0] = new Player(startPortalX, startPortalY);
   pcStartDrawn = true;
+
+  // Instantiate NPCs
+
 
   // Set npcSpeed
   maxSpeed = 3;
@@ -172,24 +163,9 @@ void draw() {
     for (int i = 0; i < 3; i++) {
       exitPortals[i].display();
     }
-    /*fill(231, 36, 250); // Purple
-     rect(secondPortalX, secondPortalY, rightWidth, rightHeight);
-     rect(thirdPortalX, thirdPortalY, topWidth, topHeight);
-     rect(fourthPortalX, fourthPortalY, rightWidth, rightHeight);*/
 
     // Starting draw PC
     player[0].display();
-    /*if (pcStartDrawn) {
-     fill( 247, 163, 255);
-     ellipse(player[0].pcPosition.x, player[0].pcPosition.y, player[0].pcRadius, player[0].pcRadius);
-     noFill();
-     ellipse(player[0].pcPosition.x, player[0].pcPosition.y, playerRadiusCollider, playerRadiusCollider);
-     pcStartDrawn = false;
-     } else {      
-     ellipse(player[0].pcPosition.x, player[0].pcPosition.y, 15, 15);
-     moveNPCRunner();
-     moveNPCFollower();
-     }*/
     break;
 
   case 3:  
@@ -364,25 +340,12 @@ void mouseDragged() {
     // 5- Draw everything
     fill(251, 208, 255);
     ellipse(player[0].pcPosition.x, player[0].pcPosition.y, 15, 15);
-
-    /*for (int counter = 0; counter < npcRunnersX.length; counter++) {
-      distanceBetweenCenters[0] = player[0].pcPosition.x - npcRunnersX[counter];  //Vector coords.
-      distanceBetweenCenters[1] = player[0].pcPosition.y - npcRunnersY[counter];  
-
-      magnitudeOfVector = sqrt(distanceBetweenCenters[0] * distanceBetweenCenters[0] + //Vector's module/distance
-        distanceBetweenCenters[1] * distanceBetweenCenters[1]); 
-
-      // There's collision if...
-      if (magnitudeOfVector < playerRadiusCollider + npcRadius) {
-        collidedTrigger = true;
-      }
-    }*/
   }
 }
 
 // AI
-void moveNPCFollower() {
-  for (int i = 0; i < npcFollowersY.length; i++) {
+void moveFollower() {
+  for (int i = 0; i < npcFollowersX.length; i++) {
     // Evaluate a vector
     vectorXFollower = player[0].pcPosition.x - npcFollowersX[i];
     vectorYFollower = player[0].pcPosition.y - npcFollowersY[i];
@@ -425,10 +388,10 @@ void moveNPCRunner() {
     // There's collision if...
     if (magnitudeOfVector < playerRadiusCollider + npcRadius) {
       collidedTrigger = true;
-    }else{
-     collidedTrigger = false; 
+    } else {
+      collidedTrigger = false;
     }
-    
+
     if (collidedTrigger) {
       // Evaluate a vector
       vectorXRunner = player[0].pcPosition.x - npcRunnersX[i];
@@ -515,26 +478,12 @@ class Player {
       pcStartDrawn = false;
     } else {      
       ellipse(pcPosition.x, pcPosition.y, 15, 15);
+      moveFollower();
       moveNPCRunner();
-      moveNPCFollower();
     }
   }
 
   void update() {
     // Do stuff
-  }
-}
-
-class NpcFollower {
-  int npcRadius;
-  float npcSpeed;
-  float moduloFollower;
-  PVector npcFollowersPosition;
-  PVector vectorFollower;
-
-  NpcFollower (float coordX, float coordY) {
-    npcRadius = 8;
-    npcFollowersPosition = new PVector(coordX, coordY);
-    vectorFollower = new PVector(player[0].pcPosition.x, player[0].pcPosition.y);
   }
 }
