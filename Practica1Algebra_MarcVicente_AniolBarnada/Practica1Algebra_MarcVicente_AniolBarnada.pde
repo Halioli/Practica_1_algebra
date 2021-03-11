@@ -45,6 +45,8 @@ int interval = 102;
 String gameOverMessage = "You lose";
 String  winMessage = "You win";
 
+//Object variables
+Object[] objects = new Object[8];
 // BOSS Variables
 
 
@@ -95,8 +97,10 @@ void setup() {
   player[0] = new Player(startPortalX, startPortalY);
   pcStartDrawn = true;
 
-  // Instantiate NPCs
-
+  // Instantiate objects
+  for (int i=0; i < objects.length; i++) {
+    objects[i] = new Object();
+  }
 
   // Set npcSpeed
   maxSpeed = 3;
@@ -166,6 +170,14 @@ void draw() {
 
     // Starting draw PC
     player[0].display();
+
+    for (int i=0; i< objects.length; i++) {
+      objects[i].display();
+      objects[i].update();
+    }
+
+
+
     break;
 
   case 3:  
@@ -485,5 +497,76 @@ class Player {
 
   void update() {
     // Do stuff
+  }
+}
+
+class Object {
+  int objectX, objectY;
+  int rectHeight;
+  int rectWidth;
+  int isRectangle;
+  int objectRadius;
+
+
+  Object () {
+    isRectangle = (int)random(0, 2);
+    objectX = (int)random(20, width-20);
+    objectY = (int)random(20, height-20);
+    rectHeight = (int)random(20, 80);
+    rectWidth = (int)random(20, 80);
+    objectRadius = (int)random(20, 80);
+    println(isRectangle);
+  }
+
+  void display() {
+    fill(0);
+    if (isRectangle == 0) {
+      rect((float)objectX, (float)objectY, (float)rectHeight, (float)rectWidth);
+    } else {
+      ellipse((float)objectX, (float)objectY, (float)objectRadius, (float)objectRadius);
+    }
+  }
+
+  void update() {
+
+    //Collisions
+    float[] distance_between_centers;
+    float magnitude_of_vector;
+    distance_between_centers = new float[2];
+    boolean collided = false;
+
+
+
+    for (int i = 0; i < objects.length; i++) {
+      
+      if (objects[i].isRectangle == 0) {
+      } else {
+        distance_between_centers[0] = player[0].pcPosition.x - objects[i].objectX;  //Vector coords.
+        distance_between_centers[1] = player[0].pcPosition.y - objects[i].objectY;  
+
+        magnitude_of_vector = sqrt(distance_between_centers[0] * distance_between_centers[0] + //Vector's module/distance
+          distance_between_centers[1] * distance_between_centers[1]); 
+
+        //There's collision if...
+        if (magnitude_of_vector < player[0].pcRadius + objects[i].objectRadius) {
+          collided = true;
+        } else {
+          collided = false;
+        }
+        //NO FUNCIONA MAMAUEBO
+        if (collided) {
+          if (player[0].pcPosition.x > objects[i].objectX)
+            player[0].pcSpeed = -1;
+          else if (player[0].pcPosition.x < objects[i].objectX)
+            player[0].pcSpeed = -1;
+          else if (player[0].pcPosition.y < objects[i].objectY)
+            player[0].pcSpeed = -1;
+          else if (player[0].pcPosition.y > objects[i].objectY)
+            player[0].pcSpeed = -1;
+        } else {
+          player[0].pcSpeed =  2;
+        }
+      }
+    }
   }
 }
