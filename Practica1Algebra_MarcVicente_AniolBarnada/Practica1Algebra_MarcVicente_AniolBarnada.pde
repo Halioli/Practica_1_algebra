@@ -53,6 +53,7 @@ String  winMessage = "You win";
 
 // BOSS Variables
 
+
 // FUNCTIONS //
 // ===================================================
 void settings() {
@@ -138,7 +139,7 @@ void draw() {
     fill(0);
     text(time, 20, 40);
 
-    // Nº lives text
+    // Nº lives
     text("Lives: "+lives, 20, height - 40);
 
     // Health bar
@@ -249,6 +250,7 @@ boolean isInteger(String s) {
   return result;
 }
 
+// Game start
 void SpawnEnemies(int numEnemies) {
   //int remainder = numEnemies % 3;
   numEnemies /= 3;
@@ -326,6 +328,7 @@ void SpawnEnemies(int numEnemies) {
   }
 }
 
+// Player mouse movement
 void mouseDragged() {
   float[] distanceBetweenCenters;
   float magnitudeOfVector;
@@ -369,6 +372,7 @@ void mouseDragged() {
   }
 }
 
+// AI
 void moveNPCFollower() {
   for (int i = 0; i < npcFollowersY.length; i++) {
     // Evaluate a vector
@@ -431,3 +435,5 @@ void moveNPCRunner() {
     }
   }
 }
+
+// Classes
