@@ -116,7 +116,6 @@ void setup() {
 // DRAW
 // ===================================================
 void draw() {
-
   switch(state) {
     // Choose Enemies(n) Screen
   case 0:
@@ -166,6 +165,7 @@ void draw() {
     // Exit portals color and instance
     for (int i = 0; i < 3; i++) {
       exitPortals[i].display();
+      exitPortals[i].update();
     }
 
     // Starting draw PC
@@ -175,9 +175,6 @@ void draw() {
       objects[i].display();
       objects[i].update();
     }
-
-
-
     break;
 
   case 3:  
@@ -328,8 +325,6 @@ void SpawnEnemies(int numEnemies) {
 
 // Player mouse movement
 void mouseDragged() {
-
-
   if (!pcStartDrawn && (state != 4 || state != 5)) {
     // 1- Evaluate a vector
     float vectorX, vectorY;
@@ -443,9 +438,26 @@ class Portal {
   boolean topPortal;
   boolean bossPortal;
 
+  //boolean collided;
+  float xMin;
+  float yMin;
+  float xMax;
+  float yMax;
+
   Portal (float coordX, float coordY, boolean isTop) {
     location = new PVector(coordX, coordY);
     topPortal = isTop;
+    if (isTop) {
+      xMin = location.x - topWidth/2; 
+      yMin = location.y - topHeight/2;
+      xMax = location.x + topWidth/2;
+      yMax = location.y + topHeight/2;
+    } else {
+      xMin = location.x - rightWidth/2; 
+      yMin = location.y - rightHeight/2;
+      xMax = location.x + rightWidth/2;
+      yMax = location.y + rightHeight/2;
+    }
   }
 
   void display() {
@@ -460,6 +472,21 @@ class Portal {
 
   void update() {
     // Look collisions
+    if ((player[0].pcPosition.x < xMin) || (player[0].pcPosition.y < yMin) 
+      || (xMax < player[0].pcPosition.x) || (yMax < player[0].pcPosition.y)) {
+      //collided = false;
+      //println("NO");
+    } else {
+      //collided = true;
+      println("Collided with portal");
+      if(bossPortal)
+      {
+        state = 3;
+      } else {
+        player[0].pcPosition.x = startPortalX;
+        player[0].pcPosition.y = startPortalY;
+      }
+    }
   }
 }
 
@@ -469,6 +496,7 @@ class Player {
   int points;
   int pcRadius;
   float pcSpeed;
+  float pcMaxSpeed = 2;
   PVector pcPosition;
   boolean collidedTrigger = false;
 
@@ -477,7 +505,7 @@ class Player {
     health = 100;
     points = 0; 
     pcRadius = 12;
-    pcSpeed = 2;
+    pcSpeed = pcMaxSpeed;
     pcPosition = new PVector(coordX, coordY);
   }
 
@@ -528,32 +556,30 @@ class Object {
   }
 
   void update() {
-
     //Collisions
     float[] distance_between_centers;
     float magnitude_of_vector;
+    //float distanceCorrection;
     distance_between_centers = new float[2];
     boolean collided = false;
 
-
-
     for (int i = 0; i < objects.length; i++) {
-      
       if (objects[i].isRectangle == 0) {
       } else {
-        distance_between_centers[0] = player[0].pcPosition.x - objects[i].objectX;  //Vector coords.
+        distance_between_centers[0] = player[0].pcPosition.x - objects[i].objectX;  // Vector coords.
         distance_between_centers[1] = player[0].pcPosition.y - objects[i].objectY;  
 
-        magnitude_of_vector = sqrt(distance_between_centers[0] * distance_between_centers[0] + //Vector's module/distance
+        magnitude_of_vector = sqrt(distance_between_centers[0] * distance_between_centers[0] + // Vector's module/distance
           distance_between_centers[1] * distance_between_centers[1]); 
 
-        //There's collision if...
+        //distanceCorrection = ((player[0].pcRadius + objects[i].objectRadius) - magnitude_of_vector)/2;
+        // There's collision if...
         if (magnitude_of_vector < player[0].pcRadius + objects[i].objectRadius) {
           collided = true;
         } else {
           collided = false;
         }
-        //NO FUNCIONA MAMAUEBO
+
         if (collided) {
           if (player[0].pcPosition.x > objects[i].objectX)
             player[0].pcSpeed = -1;
@@ -564,7 +590,7 @@ class Object {
           else if (player[0].pcPosition.y > objects[i].objectY)
             player[0].pcSpeed = -1;
         } else {
-          player[0].pcSpeed =  2;
+          player[0].pcSpeed =  player[0].pcMaxSpeed;
         }
       }
     }
