@@ -178,7 +178,8 @@ void draw() {
     break;
 
   case 3:  
-    // Boss battle state code  
+    // Boss battle state code
+    background(0);
     break;
 
   case 4:
@@ -344,6 +345,17 @@ void mouseDragged() {
     player[0].pcPosition.x += vectorX;
     player[0].pcPosition.y += vectorY;
 
+    // Collide with edges
+    if ((player[0].pcPosition.x + player[0].pcRadius) >= width ) {
+      player[0].pcPosition.x -= 2;
+    } else if ( (player[0].pcPosition.x + player[0].pcRadius) <= 0) {
+      player[0].pcPosition.x = 2;
+    } else if ( (player[0].pcPosition.y + player[0].pcRadius) <= 0) {
+      player[0].pcPosition.y = 2;
+    } else if ((player[0].pcPosition.y + player[0].pcRadius) >= height) {
+      player[0].pcPosition.y -= 2;
+    }
+
     // 5- Draw everything
     fill(251, 208, 255);
     ellipse(player[0].pcPosition.x, player[0].pcPosition.y, 15, 15);
@@ -380,7 +392,6 @@ void moveFollower() {
 }
 
 void moveNPCRunner() {
-
   float[] distanceBetweenCenters;
   float magnitudeOfVector;
   distanceBetweenCenters = new float[2];
@@ -474,12 +485,10 @@ class Portal {
     // Look collisions
     if ((player[0].pcPosition.x < xMin) || (player[0].pcPosition.y < yMin) 
       || (xMax < player[0].pcPosition.x) || (yMax < player[0].pcPosition.y)) {
-      //collided = false;
       //println("NO");
     } else {
-      //collided = true;
       println("Collided with portal");
-      if(bossPortal)
+      if (bossPortal)
       {
         state = 3;
       } else {
@@ -582,13 +591,13 @@ class Object {
 
         if (collided) {
           if (player[0].pcPosition.x > objects[i].objectX)
-            player[0].pcSpeed = -1;
+            player[0].pcPosition.x += 2;
           else if (player[0].pcPosition.x < objects[i].objectX)
-            player[0].pcSpeed = -1;
+            player[0].pcPosition.x -= 2;
           else if (player[0].pcPosition.y < objects[i].objectY)
-            player[0].pcSpeed = -1;
+            player[0].pcPosition.y += 2;
           else if (player[0].pcPosition.y > objects[i].objectY)
-            player[0].pcSpeed = -1;
+            player[0].pcPosition.y -= 2;
         } else {
           player[0].pcSpeed =  player[0].pcMaxSpeed;
         }
