@@ -236,6 +236,18 @@ void keyPressed() {
     } else {
       textInput+=key;
     }
+  } else if (state == 1 || state == 3) {
+    if (key == CODED) {
+      if (keyCode == UP) {
+        player[0].pcPosition.y -= player[0].pcSpeed;
+      } else if (keyCode == DOWN) {
+        player[0].pcPosition.y += player[0].pcSpeed;
+      } else if (keyCode == LEFT) {
+        player[0].pcPosition.x -= player[0].pcSpeed;
+      } else if (keyCode == RIGHT) {
+        player[0].pcPosition.x += player[0].pcSpeed;
+      }
+    }
   }
 }
 
@@ -350,19 +362,23 @@ void mouseDragged() {
     player[0].pcPosition.y += vectorY;
 
     // Collide with edges
-    if ((player[0].pcPosition.x + player[0].pcRadius) >= width ) {
-      player[0].pcPosition.x -= 2;
-    } else if ( (player[0].pcPosition.x + player[0].pcRadius) <= 0) {
-      player[0].pcPosition.x = 2;
-    } else if ( (player[0].pcPosition.y + player[0].pcRadius) <= 0) {
-      player[0].pcPosition.y = 2;
-    } else if ((player[0].pcPosition.y + player[0].pcRadius) >= height) {
-      player[0].pcPosition.y -= 2;
-    }
+    CollideWithEdgesPlayer();
 
     // 5- Draw everything
     fill(251, 208, 255);
     ellipse(player[0].pcPosition.x, player[0].pcPosition.y, 15, 15);
+  }
+}
+
+void CollideWithEdgesPlayer() {
+  if ((player[0].pcPosition.x + player[0].pcRadius) >= width ) {
+    player[0].pcPosition.x -= 2;
+  } else if ( (player[0].pcPosition.x + player[0].pcRadius) <= 0) {
+    player[0].pcPosition.x = 2;
+  } else if ( (player[0].pcPosition.y + player[0].pcRadius) <= 0) {
+    player[0].pcPosition.y = 2;
+  } else if ((player[0].pcPosition.y + player[0].pcRadius) >= height) {
+    player[0].pcPosition.y -= 2;
   }
 }
 
@@ -530,47 +546,6 @@ void moveWanderer() {
     float[] distanceBetweenCenters;
     float magnitudeOfVector;
     distanceBetweenCenters = new float[2];
-    
-    vectorXWanderer = random(width) - npcWanderersX[i];
-    vectorYWanderer = random(height) - npcWanderersY[i];
-
-    // Normalize the vector
-    moduloWanderer = sqrt(vectorXWanderer * vectorXWanderer + vectorYWanderer * vectorYWanderer);
-
-    // Initialize all the enemies speed
-    npcSpeed[i] = random(minSpeed, maxSpeed);
-    vectorXWanderer /= moduloWanderer; 
-    vectorYWanderer /= moduloWanderer;
-
-    // 3- Scale the vector
-    vectorXWanderer *= npcSpeed[i]; 
-    vectorYWanderer *= npcSpeed[i];
-
-    // 4- Move the enemy
-    int movement = (int)random(0, 6);
-    if (movement == 0) {
-      npcWanderersX[i] += vectorXWanderer;
-      npcWanderersY[i] += vectorYWanderer;
-    } else if (movement == 1) {
-      npcWanderersX[i] -= vectorXWanderer;
-      npcWanderersY[i] -= vectorYWanderer;
-    } else if (movement == 2) {
-      npcWanderersX[i] += vectorXWanderer * 2;
-      npcWanderersY[i] += vectorYWanderer * 2;
-    } else if (movement == 3) {
-      npcWanderersX[i] -= vectorXWanderer * 2;
-      npcWanderersY[i] -= vectorYWanderer * 2;
-    } else if (movement == 4) {
-      npcWanderersX[i] += vectorXWanderer * 3;
-      npcWanderersY[i] += vectorYWanderer * 3;
-    } else if (movement == 5) {
-      npcWanderersX[i] -= vectorXWanderer * 3;
-      npcWanderersY[i] -= vectorYWanderer * 3;
-    }
-
-    // 5- Draw everything
-    fill(0, 0, 255);
-    ellipse(npcWanderersX[i], npcWanderersY[i], npcRadius, npcRadius);
 
     distanceBetweenCenters[0] = player[0].pcPosition.x - npcRunnersX[i];  // Vector coords.
     distanceBetweenCenters[1] = player[0].pcPosition.y - npcRunnersY[i];  
@@ -581,23 +556,64 @@ void moveWanderer() {
     //distanceCorrection = ((player[0].pcRadius + objects[i].objectRadius) - magnitude_of_vector)/2;
     // There's collision if...
     if (magnitudeOfVector * 2 < player[0].pcRadius + npcRadius) {
-      if (player[0].pcPosition.x > npcRunnersX[i]) {
+      if (player[0].pcPosition.x > npcWanderersX[i]) {
         player[0].points += 100;
-        npcRunnersX[i] = -100;
-        npcRunnersY[i] = -100;
-      } else if (player[0].pcPosition.x < npcRunnersX[i]) {
+        npcWanderersX[i] = -100;
+        npcWanderersY[i] = -100;
+      } else if (player[0].pcPosition.x < npcWanderersX[i]) {
         player[0].points += 100;
-        npcRunnersX[i] = -100;
-        npcRunnersY[i] = -100;
-      } else if (player[0].pcPosition.y < npcRunnersY[i]) {
+        npcWanderersX[i] = -100;
+        npcWanderersY[i] = -100;
+      } else if (player[0].pcPosition.y < npcWanderersY[i]) {
         player[0].points += 100;
-        npcRunnersX[i] = -100;
-        npcRunnersY[i] = -100;
-      } else if (player[0].pcPosition.y > npcRunnersY[i]) {
+        npcWanderersX[i] = -100;
+        npcWanderersY[i] = -100;
+      } else if (player[0].pcPosition.y > npcWanderersY[i]) {
         player[0].points += 100;
-        npcRunnersX[i] = -100;
-        npcRunnersY[i] = -100;
+        npcWanderersX[i] = -100;
+        npcWanderersY[i] = -100;
       }
+
+      vectorXWanderer = random(width) - npcWanderersX[i];
+      vectorYWanderer = random(height) - npcWanderersY[i];
+
+      // Normalize the vector
+      moduloWanderer = sqrt(vectorXWanderer * vectorXWanderer + vectorYWanderer * vectorYWanderer);
+
+      // Initialize all the enemies speed
+      npcSpeed[i] = random(minSpeed, maxSpeed);
+      vectorXWanderer /= moduloWanderer; 
+      vectorYWanderer /= moduloWanderer;
+
+      // 3- Scale the vector
+      vectorXWanderer *= npcSpeed[i]; 
+      vectorYWanderer *= npcSpeed[i];
+
+      // 4- Move the enemy
+      int movement = (int)random(0, 6);
+      if (movement == 0) {
+        npcWanderersX[i] += vectorXWanderer;
+        npcWanderersY[i] += vectorYWanderer;
+      } else if (movement == 1) {
+        npcWanderersX[i] -= vectorXWanderer;
+        npcWanderersY[i] -= vectorYWanderer;
+      } else if (movement == 2) {
+        npcWanderersX[i] += vectorXWanderer * 2;
+        npcWanderersY[i] += vectorYWanderer * 2;
+      } else if (movement == 3) {
+        npcWanderersX[i] -= vectorXWanderer * 2;
+        npcWanderersY[i] -= vectorYWanderer * 2;
+      } else if (movement == 4) {
+        npcWanderersX[i] += vectorXWanderer * 3;
+        npcWanderersY[i] += vectorYWanderer * 3;
+      } else if (movement == 5) {
+        npcWanderersX[i] -= vectorXWanderer * 3;
+        npcWanderersY[i] -= vectorYWanderer * 3;
+      }
+
+      // 5- Draw everything
+      fill(0, 0, 255);
+      ellipse(npcWanderersX[i], npcWanderersY[i], npcRadius, npcRadius);
     }
   }
 }
@@ -770,7 +786,6 @@ class Object {
         magnitude_of_vector = sqrt(distance_between_centers[0] * distance_between_centers[0] + // Vector's module/distance
           distance_between_centers[1] * distance_between_centers[1]); 
 
-        //distanceCorrection = ((player[0].pcRadius + objects[i].objectRadius) - magnitude_of_vector)/2;
         // There's collision if...
         if (magnitude_of_vector * 2 < player[0].pcRadius + objects[i].objectRadius) {
           if (player[0].pcPosition.x > objects[i].objectX)
