@@ -239,12 +239,16 @@ void keyPressed() {
   } else if (state == 1 || state == 3) {
     if (key == CODED) {
       if (keyCode == UP) {
+        player[0].pcSpeed = 7;
         player[0].pcPosition.y -= player[0].pcSpeed;
       } else if (keyCode == DOWN) {
+        player[0].pcSpeed = 7;
         player[0].pcPosition.y += player[0].pcSpeed;
       } else if (keyCode == LEFT) {
+        player[0].pcSpeed = 7;
         player[0].pcPosition.x -= player[0].pcSpeed;
       } else if (keyCode == RIGHT) {
+        player[0].pcSpeed = 7;
         player[0].pcPosition.x += player[0].pcSpeed;
       }
     }
@@ -383,7 +387,7 @@ void CollideWithEdgesPlayer() {
 }
 
 // AI
-void moveFollower() {
+void moveNPCFollower() {
   float[] distanceBetweenCenters;
   float magnitudeOfVector;
   distanceBetweenCenters = new float[2];
@@ -541,82 +545,82 @@ void moveNPCRunner() {
   }
 }
 
-void moveWanderer() {
+void moveNPCWanderer() {
+  float[] distanceBetweenCenters;
+  float magnitudeOfVector;
+  distanceBetweenCenters = new float[2];
   for (int i = 0; i < npcWanderersX.length; i++) {
-    float[] distanceBetweenCenters;
-    float magnitudeOfVector;
-    distanceBetweenCenters = new float[2];
-
-    distanceBetweenCenters[0] = player[0].pcPosition.x - npcRunnersX[i];  // Vector coords.
-    distanceBetweenCenters[1] = player[0].pcPosition.y - npcRunnersY[i];  
+    distanceBetweenCenters[0] = player[0].pcPosition.x - npcWanderersX[i];  // Vector coords.
+    distanceBetweenCenters[1] = player[0].pcPosition.y - npcWanderersY[i];  
 
     magnitudeOfVector = sqrt(distanceBetweenCenters[0] * distanceBetweenCenters[0] + // Vector's module/distance
       distanceBetweenCenters[1] * distanceBetweenCenters[1]); 
 
     //distanceCorrection = ((player[0].pcRadius + objects[i].objectRadius) - magnitude_of_vector)/2;
     // There's collision if...
+    vectorXWanderer = random(width) - npcWanderersX[i];
+    vectorYWanderer = random(height) - npcWanderersY[i];
+
+    // Normalize the vector
+    moduloWanderer = sqrt(vectorXWanderer * vectorXWanderer + vectorYWanderer * vectorYWanderer);
+
+    // Initialize all the enemies speed
+    npcSpeed[i] = random(minSpeed, maxSpeed);
+    vectorXWanderer /= moduloWanderer; 
+    vectorYWanderer /= moduloWanderer;
+
+    // 3- Scale the vector
+    vectorXWanderer *= npcSpeed[i]; 
+    vectorYWanderer *= npcSpeed[i];
+
+    // 4- Move the enemy
+    int movement = (int)random(0, 6);
+    if (movement == 0) {
+      npcWanderersX[i] += vectorXWanderer;
+      npcWanderersY[i] += vectorYWanderer;
+    } else if (movement == 1) {
+      npcWanderersX[i] -= vectorXWanderer;
+      npcWanderersY[i] -= vectorYWanderer;
+    } else if (movement == 2) {
+      npcWanderersX[i] += vectorXWanderer * 2;
+      npcWanderersY[i] += vectorYWanderer * 2;
+    } else if (movement == 3) {
+      npcWanderersX[i] -= vectorXWanderer * 2;
+      npcWanderersY[i] -= vectorYWanderer * 2;
+    } else if (movement == 4) {
+      npcWanderersX[i] += vectorXWanderer * 3;
+      npcWanderersY[i] += vectorYWanderer * 3;
+    } else if (movement == 5) {
+      npcWanderersX[i] -= vectorXWanderer * 3;
+      npcWanderersY[i] -= vectorYWanderer * 3;
+    }
+
+    // 5- Draw everything
+    fill(0, 0, 255);
+    ellipse(npcWanderersX[i], npcWanderersY[i], npcRadius, npcRadius);
+
     if (magnitudeOfVector * 2 < player[0].pcRadius + npcRadius) {
       if (player[0].pcPosition.x > npcWanderersX[i]) {
-        player[0].points += 100;
+        player[0].health -= 15;
         npcWanderersX[i] = -100;
         npcWanderersY[i] = -100;
       } else if (player[0].pcPosition.x < npcWanderersX[i]) {
-        player[0].points += 100;
+        player[0].health -= 15;
         npcWanderersX[i] = -100;
         npcWanderersY[i] = -100;
       } else if (player[0].pcPosition.y < npcWanderersY[i]) {
-        player[0].points += 100;
+        player[0].health -= 15;
         npcWanderersX[i] = -100;
         npcWanderersY[i] = -100;
       } else if (player[0].pcPosition.y > npcWanderersY[i]) {
-        player[0].points += 100;
+        player[0].health -= 15;
         npcWanderersX[i] = -100;
         npcWanderersY[i] = -100;
       }
-
-      vectorXWanderer = random(width) - npcWanderersX[i];
-      vectorYWanderer = random(height) - npcWanderersY[i];
-
-      // Normalize the vector
-      moduloWanderer = sqrt(vectorXWanderer * vectorXWanderer + vectorYWanderer * vectorYWanderer);
-
-      // Initialize all the enemies speed
-      npcSpeed[i] = random(minSpeed, maxSpeed);
-      vectorXWanderer /= moduloWanderer; 
-      vectorYWanderer /= moduloWanderer;
-
-      // 3- Scale the vector
-      vectorXWanderer *= npcSpeed[i]; 
-      vectorYWanderer *= npcSpeed[i];
-
-      // 4- Move the enemy
-      int movement = (int)random(0, 6);
-      if (movement == 0) {
-        npcWanderersX[i] += vectorXWanderer;
-        npcWanderersY[i] += vectorYWanderer;
-      } else if (movement == 1) {
-        npcWanderersX[i] -= vectorXWanderer;
-        npcWanderersY[i] -= vectorYWanderer;
-      } else if (movement == 2) {
-        npcWanderersX[i] += vectorXWanderer * 2;
-        npcWanderersY[i] += vectorYWanderer * 2;
-      } else if (movement == 3) {
-        npcWanderersX[i] -= vectorXWanderer * 2;
-        npcWanderersY[i] -= vectorYWanderer * 2;
-      } else if (movement == 4) {
-        npcWanderersX[i] += vectorXWanderer * 3;
-        npcWanderersY[i] += vectorYWanderer * 3;
-      } else if (movement == 5) {
-        npcWanderersX[i] -= vectorXWanderer * 3;
-        npcWanderersY[i] -= vectorYWanderer * 3;
-      }
-
-      // 5- Draw everything
-      fill(0, 0, 255);
-      ellipse(npcWanderersX[i], npcWanderersY[i], npcRadius, npcRadius);
     }
   }
 }
+
 
 
 // Classes
@@ -681,7 +685,7 @@ class Player {
   int points;
   int pcRadius;
   float pcSpeed;
-  float pcMaxSpeed = 2;
+  float pcMaxSpeed = 1;
   PVector pcPosition;
   boolean collidedTrigger = false;
 
@@ -703,15 +707,15 @@ class Player {
       pcStartDrawn = false;
     } else {      
       ellipse(pcPosition.x, pcPosition.y, 15, 15);
-      moveFollower();
+      moveNPCFollower();
       moveNPCRunner();
-      moveWanderer();
+      moveNPCWanderer();
     }
   }
 
   void update() {
     // Do stuff
-    if (health == 0) {
+    if (health <= 0) {
       lives--;
       health = 100;
     }
