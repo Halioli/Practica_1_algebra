@@ -1,4 +1,4 @@
-// VARIABLES // //<>//
+// VARIABLES // //<>// //<>//
 
 // Portal
 float startPortalX, startPortalY;
@@ -148,6 +148,9 @@ void draw() {
     fill(0, 255, 0);
     rect(width - 150, height - 35, player[0].health, 30);
 
+    //Points Text
+    fill(0);
+    text("Points: " + player[0].points, 20, height - 80);
     // Spawn NPC's intial positions
     for (int i = 0; i < n/3; i++) {
       fill(255, 0, 0);
@@ -364,37 +367,82 @@ void mouseDragged() {
 
 // AI
 void moveFollower() {
+  float[] distanceBetweenCenters;
+  float magnitudeOfVector;
+  distanceBetweenCenters = new float[2];
+  boolean collided = false;
+
   for (int i = 0; i < npcFollowersX.length; i++) {
-    // Evaluate a vector
-    vectorXFollower = player[0].pcPosition.x - npcFollowersX[i];
-    vectorYFollower = player[0].pcPosition.y - npcFollowersY[i];
+    distanceBetweenCenters[0] = player[0].pcPosition.x - npcFollowersX[i];  // Vector coords.
+    distanceBetweenCenters[1] = player[0].pcPosition.y - npcFollowersY[i];  
 
-    // Normalize the vector
-    moduloFollower = sqrt(vectorXFollower * vectorXFollower + vectorYFollower * vectorYFollower);
+    magnitudeOfVector = sqrt(distanceBetweenCenters[0] * distanceBetweenCenters[0] + // Vector's module/distance
+      distanceBetweenCenters[1] * distanceBetweenCenters[1]); 
 
-    // Initialize all the enemies speed
-    npcSpeed[i] = random(minSpeed, maxSpeed);
-    vectorXFollower /= moduloFollower; 
-    vectorYFollower /= moduloFollower;
+    //distanceCorrection = ((player[0].pcRadius + objects[i].objectRadius) - magnitude_of_vector)/2;
+    // There's collision if...
+    if (magnitudeOfVector * 2 < player[0].pcRadius + npcRadius) {
+      if (player[0].pcPosition.x > npcFollowersX[i]) {
+        player[0].health -= 10;
+        npcFollowersX[i] = -100;
+        npcFollowersY[i] = -100;
+      } else if (player[0].pcPosition.x < npcFollowersX[i]) {
+        player[0].health -= 10;
+        npcFollowersX[i] = -100;
+        npcFollowersY[i] = -100;
+      
+      } else if (player[0].pcPosition.y < npcFollowersY[i]) {
+        player[0].health -= 10;
+        npcFollowersX[i] = -100;
+        npcFollowersY[i] = -100;
+       
+      } else if (player[0].pcPosition.y > npcFollowersY[i]) {
+        player[0].health -= 10;
+        npcFollowersX[i] = -100;
+        npcFollowersY[i] = -100;
+       
+      }
+      npcSpeed[i] = 0;
+    } else {
 
-    // 3- Scale the vector
-    vectorXFollower *= npcSpeed[i]; 
-    vectorYFollower *= npcSpeed[i];
+      // Evaluate a vector
+      vectorXFollower = player[0].pcPosition.x - npcFollowersX[i];
+      vectorYFollower = player[0].pcPosition.y - npcFollowersY[i];
 
-    // 4- Move the enemy
-    npcFollowersX[i] += vectorXFollower;
-    npcFollowersY[i] += vectorYFollower;
+      // Normalize the vector
+      moduloFollower = sqrt(vectorXFollower * vectorXFollower + vectorYFollower * vectorYFollower);
 
-    // 5- Draw everything
-    fill(255, 0, 0);
-    ellipse(npcFollowersX[i], npcFollowersY[i], npcRadius, npcRadius);
+      // Initialize all the enemies speed
+      npcSpeed[i] = random(minSpeed, maxSpeed);
+      vectorXFollower /= moduloFollower; 
+      vectorYFollower /= moduloFollower;
+
+      // 3- Scale the vector
+      vectorXFollower *= npcSpeed[i]; 
+      vectorYFollower *= npcSpeed[i];
+
+      // 4- Move the enemy
+      npcFollowersX[i] += vectorXFollower;
+      npcFollowersY[i] += vectorYFollower;
+
+      // 5- Draw everything
+      fill(255, 0, 0);
+      ellipse(npcFollowersX[i], npcFollowersY[i], npcRadius, npcRadius);
+    }
   }
 }
 
 void moveNPCRunner() {
+  //Variables Collision Trigger
   float[] distanceBetweenCenters;
   float magnitudeOfVector;
   distanceBetweenCenters = new float[2];
+
+  //Variables Collision Player
+  float[] distance_between_centers2;
+  float magnitude_of_vector2;
+  //float distanceCorrection;
+  distance_between_centers2 = new float[2];
 
   for (int i = 0; i < npcRunnersY.length; i++) {
     distanceBetweenCenters[0] = player[0].pcPosition.x - npcRunnersX[i];  //Vector coords.
@@ -440,8 +488,37 @@ void moveNPCRunner() {
       fill(0, 255, 0);
       ellipse(npcRunnersX[i], npcRunnersY[i], npcRadius, npcRadius);
     }
+
+    distance_between_centers2[0] = player[0].pcPosition.x - npcRunnersX[i];  // Vector coords.
+    distance_between_centers2[1] = player[0].pcPosition.y - npcRunnersY[i];  
+
+    magnitude_of_vector2 = sqrt(distance_between_centers2[0] * distance_between_centers2[0] + // Vector's module/distance
+      distance_between_centers2[1] * distance_between_centers2[1]); 
+
+    //distanceCorrection = ((player[0].pcRadius + objects[i].objectRadius) - magnitude_of_vector)/2;
+    // There's collision if...
+    if (magnitude_of_vector2 * 2 < player[0].pcRadius + npcRadius) {
+      if (player[0].pcPosition.x > npcRunnersX[i]) {
+        player[0].points += 100;
+        npcRunnersX[i] = -100;
+        npcRunnersY[i] = -100;
+      } else if (player[0].pcPosition.x < npcRunnersX[i]) {
+        player[0].points += 100;
+        npcRunnersX[i] = -100;
+        npcRunnersY[i] = -100;
+      } else if (player[0].pcPosition.y < npcRunnersY[i]) {
+        player[0].points += 100;
+        npcRunnersX[i] = -100;
+        npcRunnersY[i] = -100;
+      } else if (player[0].pcPosition.y > npcRunnersY[i]) {
+        player[0].points += 100;
+        npcRunnersX[i] = -100;
+        npcRunnersY[i] = -100;
+      }
+    }
   }
 }
+
 
 // Classes
 class Portal {
@@ -538,12 +615,20 @@ class Player {
 }
 
 class Object {
+  //Object variables
   int objectX, objectY;
+
+  //Rect object variables
   int rectHeight;
   int rectWidth;
+  float xMin;
+  float yMin;
+  float xMax;
+  float yMax;
+
+  //Circle object variables
   int isRectangle;
   int objectRadius;
-
 
   Object () {
     isRectangle = (int)random(0, 2);
@@ -553,6 +638,12 @@ class Object {
     rectWidth = (int)random(20, 80);
     objectRadius = (int)random(20, 80);
     println(isRectangle);
+    if (isRectangle == 0) {
+      xMin = objectX - rectWidth/2; 
+      yMin = objectY - rectHeight/2;
+      xMax = objectX + rectWidth/2;
+      yMax = objectY + rectHeight/2;
+    }
   }
 
   void display() {
@@ -570,10 +661,15 @@ class Object {
     float magnitude_of_vector;
     //float distanceCorrection;
     distance_between_centers = new float[2];
-    boolean collided = false;
+
 
     for (int i = 0; i < objects.length; i++) {
       if (objects[i].isRectangle == 0) {
+        if ((player[0].pcPosition.x < xMin) || (player[0].pcPosition.y < yMin) ||
+          (xMax < player[0].pcPosition.x) || (yMax < player[0].pcPosition.y)) {
+          //println("NO");
+        } else {
+        }
       } else {
         distance_between_centers[0] = player[0].pcPosition.x - objects[i].objectX;  // Vector coords.
         distance_between_centers[1] = player[0].pcPosition.y - objects[i].objectY;  
@@ -583,21 +679,15 @@ class Object {
 
         //distanceCorrection = ((player[0].pcRadius + objects[i].objectRadius) - magnitude_of_vector)/2;
         // There's collision if...
-        if (magnitude_of_vector < player[0].pcRadius + objects[i].objectRadius) {
-          collided = true;
-        } else {
-          collided = false;
-        }
-
-        if (collided) {
+        if (magnitude_of_vector * 2 < player[0].pcRadius + objects[i].objectRadius) {
           if (player[0].pcPosition.x > objects[i].objectX)
-            player[0].pcPosition.x += 2;
+            player[0].pcPosition.x += 3;
           else if (player[0].pcPosition.x < objects[i].objectX)
-            player[0].pcPosition.x -= 2;
+            player[0].pcPosition.x -= 3;
           else if (player[0].pcPosition.y < objects[i].objectY)
-            player[0].pcPosition.y += 2;
+            player[0].pcPosition.y += 3;
           else if (player[0].pcPosition.y > objects[i].objectY)
-            player[0].pcPosition.y -= 2;
+            player[0].pcPosition.y -= 3;
         } else {
           player[0].pcSpeed =  player[0].pcMaxSpeed;
         }
