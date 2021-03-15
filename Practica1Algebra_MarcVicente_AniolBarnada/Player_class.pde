@@ -30,9 +30,6 @@ class Player {
       pcStartDrawn = false;
     } else {      
       ellipse(pcPosition.x, pcPosition.y, 15, 15);
-      moveNPCFollower();
-      moveNPCRunner();
-      moveNPCWanderer();
     }
   }
 

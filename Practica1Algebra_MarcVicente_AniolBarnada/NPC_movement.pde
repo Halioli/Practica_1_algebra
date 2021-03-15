@@ -8,11 +8,11 @@ float minSpeed;
 float[] npcSpeed;
 int npcRadius = 8;
 float vectorXFollower, vectorYFollower;
-float moduloFollower;
+float moduleFollower;
 float vectorXRunner, vectorYRunner;
-float moduloRunner;
+float moduleRunner;
 float vectorXWanderer, vectorYWanderer;
-float moduloWanderer;
+float moduleWanderer;
 int playerRadiusCollider;
 
 void moveNPCFollower() {
@@ -64,12 +64,12 @@ void moveNPCFollower() {
       vectorYFollower = player[0].pcPosition.y - npcFollowersY[i];
 
       // Normalize the vector
-      moduloFollower = sqrt(vectorXFollower * vectorXFollower + vectorYFollower * vectorYFollower);
+      moduleFollower = sqrt(vectorXFollower * vectorXFollower + vectorYFollower * vectorYFollower);
 
       // Initialize all the enemies speed
       npcSpeed[i] = random(minSpeed, maxSpeed);
-      vectorXFollower /= moduloFollower; 
-      vectorYFollower /= moduloFollower;
+      vectorXFollower /= moduleFollower; 
+      vectorYFollower /= moduleFollower;
 
       // 3- Scale the vector
       vectorXFollower *= npcSpeed[i]; 
@@ -118,12 +118,12 @@ void moveNPCRunner() {
       vectorYRunner = player[0].pcPosition.y - npcRunnersY[i];
 
       // Normalize the vector
-      moduloRunner = sqrt(vectorXRunner * vectorXRunner + vectorYRunner * vectorYRunner);
+      moduleRunner = sqrt(vectorXRunner * vectorXRunner + vectorYRunner * vectorYRunner);
 
       // Initialize all the enemies speed
       npcSpeed[i] = random(minSpeed, maxSpeed);
-      vectorXRunner /= moduloRunner; 
-      vectorYRunner /= moduloRunner;
+      vectorXRunner /= moduleRunner; 
+      vectorYRunner /= moduleRunner;
 
       // 3- Scale the vector
       vectorXRunner *= npcSpeed[i]; 
@@ -190,12 +190,12 @@ void moveNPCWanderer() {
     vectorYWanderer = random(height) - npcWanderersY[i];
 
     // Normalize the vector
-    moduloWanderer = sqrt(vectorXWanderer * vectorXWanderer + vectorYWanderer * vectorYWanderer);
+    moduleWanderer = sqrt(vectorXWanderer * vectorXWanderer + vectorYWanderer * vectorYWanderer);
 
     // Initialize all the enemies speed
     npcSpeed[i] = random(minSpeed, maxSpeed);
-    vectorXWanderer /= moduloWanderer; 
-    vectorYWanderer /= moduloWanderer;
+    vectorXWanderer /= moduleWanderer; 
+    vectorYWanderer /= moduleWanderer;
 
     // 3- Scale the vector
     vectorXWanderer *= npcSpeed[i]; 
