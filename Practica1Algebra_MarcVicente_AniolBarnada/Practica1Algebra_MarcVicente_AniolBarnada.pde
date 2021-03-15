@@ -74,6 +74,9 @@ void setup() {
   // Instantiate boss
   boss[0] = new Boss();
 
+  // Instantiate boss
+  bossButton[0] = new BossButtons();
+
   // Set npcSpeed
   maxSpeed = 3;
   minSpeed = 0.5;
@@ -189,6 +192,10 @@ void draw() {
 
     // Update boss
     boss[0].update();
+
+    // Update buttons
+    bossButton[0].display();
+    bossButton[0].update();
     break;
 
   case 4:

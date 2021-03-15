@@ -28,7 +28,8 @@ class Player {
       noFill();
       ellipse(pcPosition.x, pcPosition.y, playerRadiusCollider, playerRadiusCollider);
       pcStartDrawn = false;
-    } else {      
+    } else {
+      fill( 247, 163, 255);
       ellipse(pcPosition.x, pcPosition.y, 15, 15);
     }
   }
