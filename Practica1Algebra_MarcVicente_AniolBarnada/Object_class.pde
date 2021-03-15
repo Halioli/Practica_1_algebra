@@ -1,3 +1,6 @@
+//Object variables
+Object[] objects = new Object[8];
+
 class Object {
   //Object variables
   int objectX, objectY;

@@ -7,23 +7,6 @@ String textInput = "";
 boolean result = false;
 int state;
 
-// NPC Variables
-int n;  // Detemined by User Input
-float[] npcFollowersX, npcFollowersY;  // 1/3 of n
-float[] npcRunnersX, npcRunnersY;      // 1/3 of n
-float[] npcWanderersX, npcWanderersY;  // 1/3 of n
-float maxSpeed;
-float minSpeed;
-float[] npcSpeed;
-int npcRadius = 8;
-float vectorXFollower, vectorYFollower;
-float moduloFollower;
-float vectorXRunner, vectorYRunner;
-float moduloRunner;
-float vectorXWanderer, vectorYWanderer;
-float moduloWanderer;
-int playerRadiusCollider;
-
 //Timer variables
 String time = "102";
 int t;
@@ -33,8 +16,6 @@ int interval = 102;
 String gameOverMessage = "You lose";
 String  winMessage = "You win";
 
-//Object variables
-Object[] objects = new Object[8];
 // BOSS Variables
 
 
