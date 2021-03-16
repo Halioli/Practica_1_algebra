@@ -52,10 +52,28 @@ class Object {
 
     for (int i = 0; i < objects.length; i++) {
       if (objects[i].isRectangle == 0) {
-        if ((player[0].pcPosition.x < xMin) || (player[0].pcPosition.y < yMin) ||
-          (xMax < player[0].pcPosition.x) || (yMax < player[0].pcPosition.y)) {
-          //println("NO");
-        } else {
+        distance_between_centers[0] = player[0].pcPosition.x - objects[i].objectX;  // Vector coords.
+        distance_between_centers[1] = player[0].pcPosition.y - objects[i].objectY;  
+
+        magnitude_of_vector = sqrt(distance_between_centers[0] * distance_between_centers[0] + // Vector's module/distance
+          distance_between_centers[1] * distance_between_centers[1]);
+        
+        // There's collision if...
+        if (magnitude_of_vector * 2 < player[0].pcRadius + objects[i].rectWidth ||
+            magnitude_of_vector * 2 < player[0].pcRadius + objects[i].rectHeight) {
+          if (player[0].pcPosition.x < objects[i].xMin) {
+            player[0].pcPosition.x -= 5;
+          }
+          else if (player[0].pcPosition.x > objects[i].xMax) {
+            player[0].pcPosition.x += 5;
+          }
+          
+          if (player[0].pcPosition.y > objects[i].yMax) {
+            player[0].pcPosition.y += 5;
+          }
+          else if (player[0].pcPosition.y < objects[i].yMin) {
+            player[0].pcPosition.y -= 5;
+          }
         }
       } else {
         distance_between_centers[0] = player[0].pcPosition.x - objects[i].objectX;  // Vector coords.

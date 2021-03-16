@@ -16,9 +16,6 @@ int interval = 102;
 String gameOverMessage = "You lose";
 String winMessage = "You win";
 
-// BOSS Variables
-
-
 // FUNCTIONS //
 // ===================================================
 void settings() {
