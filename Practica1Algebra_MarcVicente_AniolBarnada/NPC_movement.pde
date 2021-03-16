@@ -33,22 +33,22 @@ void moveNPCFollower() {
     if (magnitudeOfVector * 2 < player[0].pcRadius + npcRadius) {
       if (player[0].pcPosition.x > npcFollowersX[i]) {
         player[0].health -= 10;
-        npcFollowersX[i] = -100;
+        npcFollowersX[i] = random(0, width);
         npcFollowersY[i] = -100;
         collided = true;
       } else if (player[0].pcPosition.x < npcFollowersX[i]) {
         player[0].health -= 10;
-        npcFollowersX[i] = -100;
+        npcFollowersX[i] = random(0, width);
         npcFollowersY[i] = -100;
         collided = true;
       } else if (player[0].pcPosition.y < npcFollowersY[i]) {
         player[0].health -= 10;
-        npcFollowersX[i] = -100;
+        npcFollowersX[i] = random(0, width);
         npcFollowersY[i] = -100;
         collided = true;
       } else if (player[0].pcPosition.y > npcFollowersY[i]) {
         player[0].health -= 10;
-        npcFollowersX[i] = -100;
+        npcFollowersX[i] = random(0, width);
         npcFollowersY[i] = -100;
         collided = true;
       } else {

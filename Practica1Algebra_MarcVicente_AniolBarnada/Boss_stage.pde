@@ -120,6 +120,7 @@ class BossButtons {
         boss[0].phase++;
         if (currentPosition > 3)
           state = 5;
+          player[0].points += 250;
       }
       break;
 
@@ -128,6 +129,7 @@ class BossButtons {
       currentPosition++;
       if (currentPosition > 3)
         state = 5;
+        player[0].points += 250;
       break;
     }
   }
