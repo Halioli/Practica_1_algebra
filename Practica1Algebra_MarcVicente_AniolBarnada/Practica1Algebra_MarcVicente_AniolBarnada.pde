@@ -92,6 +92,7 @@ void draw() {
     // Choose Enemies(n) Screen
   case 0:
     text(textInput, width/2, height/2);
+    text("Input number of NPCs:", 500, height/2);
     break;
 
     // First scene
@@ -201,6 +202,7 @@ void draw() {
     fill(255);
     textSize(40);
     text(gameOverMessage, width/2, height/2);
+    text("Score: "+ player[0].points, width/2, height/2+50);
     break;
 
   case 5:
@@ -209,6 +211,7 @@ void draw() {
     fill(255);
     textSize(40);
     text(winMessage, width/2, height/2);
+    text("Score: "+ player[0].points, width/2, height/2+50);
     break;
 
   default:
