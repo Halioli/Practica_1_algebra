@@ -118,20 +118,18 @@ class BossButtons {
         println("Collided with button");
         currentPosition++;
         boss[0].phase++;
-        if (currentPosition > 3) {
-          player[0].points += 200;
+        if (currentPosition > 3)
           state = 5;
-        }
+          player[0].points += 250;
       }
       break;
 
     default:
       println("Collided with button");
       currentPosition++;
-      if (currentPosition > 3) {
-        player[0].points += 200;
+      if (currentPosition > 3)
         state = 5;
-      }
+        player[0].points += 250;
       break;
     }
   }
