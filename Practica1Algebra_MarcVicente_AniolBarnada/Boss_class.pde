@@ -20,12 +20,12 @@ class Boss {
 
   Boss () {
     // Speed
-    initialSpeed = 0.5;
+    initialSpeed = 1;
     maxSpeed = 3;
     currentSpeed = initialSpeed;
     // Radius
     initialRadius = 32;
-    maxRadius = 64;
+    maxRadius = 128;
     currentRadius = initialRadius;
     // Movement & Position
     currentPosition = new PVector(width/2, height/2 + 20);
@@ -65,7 +65,7 @@ class Boss {
 
   void update() {
     checkCollisions(currentPosition);
-    
+
     switch (phase) {
     case 0:
       fill(175);
@@ -75,19 +75,20 @@ class Boss {
     case 1:
       fill(200);
       currentSpeed = maxSpeed/2;
-      currentRadius = maxRadius/2;
+      currentRadius = 48;
       display();
       break;
 
     case 2:
       fill(225);
       currentSpeed = maxSpeed;
-      currentRadius = maxRadius;
+      currentRadius = 64;
       display();
       break;
 
     case 3:
       fill(255);
+      currentRadius = maxRadius;
       display();
       moveNPCFollower();
       break;

@@ -33,22 +33,22 @@ void moveNPCFollower() {
     if (magnitudeOfVector * 2 < player[0].pcRadius + npcRadius) {
       if (player[0].pcPosition.x > npcFollowersX[i]) {
         player[0].health -= 10;
-        npcFollowersX[i] = -100;
+        npcFollowersX[i] = random(0, width);
         npcFollowersY[i] = -100;
         collided = true;
       } else if (player[0].pcPosition.x < npcFollowersX[i]) {
         player[0].health -= 10;
-        npcFollowersX[i] = -100;
+        npcFollowersX[i] = random(0, width);
         npcFollowersY[i] = -100;
         collided = true;
       } else if (player[0].pcPosition.y < npcFollowersY[i]) {
         player[0].health -= 10;
-        npcFollowersX[i] = -100;
+        npcFollowersX[i] = random(0, width);
         npcFollowersY[i] = -100;
         collided = true;
       } else if (player[0].pcPosition.y > npcFollowersY[i]) {
         player[0].health -= 10;
-        npcFollowersX[i] = -100;
+        npcFollowersX[i] = random(0, width);
         npcFollowersY[i] = -100;
         collided = true;
       } else {
@@ -136,9 +136,7 @@ void moveNPCRunner() {
       // 5- Draw everything
       fill(0, 255, 0);
       ellipse(npcRunnersX[i], npcRunnersY[i], npcRadius, npcRadius);
-      text("YES :)", 20, 380);
     } else {
-      text("NO  :(", 20, 380);
       fill(0, 255, 0);
       ellipse(npcRunnersX[i], npcRunnersY[i], npcRadius, npcRadius);
     }
