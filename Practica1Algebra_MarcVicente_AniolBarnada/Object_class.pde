@@ -68,10 +68,10 @@ class Object {
             player[0].pcPosition.x += 5;
           }
           
-          if (player[0].pcPosition.y > objects[i].yMax) {
+          if (player[0].pcPosition.y < objects[i].yMax) {
             player[0].pcPosition.y += 5;
           }
-          else if (player[0].pcPosition.y < objects[i].yMin) {
+          else if (player[0].pcPosition.y > objects[i].yMin) {
             player[0].pcPosition.y -= 5;
           }
         }
