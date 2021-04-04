@@ -116,13 +116,15 @@ class boid {
     strokeWeight(2);
     noFill();
     stroke(colorB);
+    translate(pos.x, pos.y, pos.z);
+    box(size);
     ellipse(pos.x, pos.y, size, size);
   }
 }
 
 // SETUP
 void setup() {
-  size(800, 600);
+  size(800, 600, P3D);
   // Llamamos a los constructores
   // de nuestros "numberOfBoids" Boids
   boidArray = new boid[numberOfBoids];
@@ -155,6 +157,12 @@ void setup() {
 // DRAW
 void draw() {
   background(0);
+
+  /* Set camera position
+   translate(width/2, height/2, 0.0); // changing the z moves the camera/zoom
+   rotateX(radians(-35.26)); // in radians
+   rotateY(radians(-45));*/
+
   // El For que recorre todos los Boids
   for (int i = 0; i < numberOfBoids; i++) {
     boidArray[i].move();
