@@ -25,7 +25,11 @@ MAIN 	PROC 	NEAR
 
     MOV     BX, 0h
     CALL    READ_INPUT
+    MOV   AH, 0h
+    ADD   BX, AX
     CALL    READ_INPUT
+    MOV   AH, 0h
+    ADD   BX, AX
     CALL    DISPLAY_BINARY_NUMBER
    
     INT 20			; terminate program
@@ -49,7 +53,7 @@ MAIN	ENDP
 READ_INPUT 	PROC    NEAR
 
     MOV AH, 8h
-    INT 21
+    INT 21h
 
     ; We check the input
     CMP   AL, 3Ah
@@ -57,15 +61,16 @@ READ_INPUT 	PROC    NEAR
         CMP   AL, 2Fh
         JL    INPUT_ERROR
         CALL  PRINT_INPUT
-        MOV   AH, 0h
-        ADD   BX, AX
+        SUB   AL, 30h
+     
     RET
       
     INPUT_ERROR:
         MOV AH, 2h
         MOV DL, 46h
-        INT 21
-        INT 20
+        INT 21h
+        INT 20h
+        CALL READ_INPUT
         
     RET
 READ_INPUT	ENDP
@@ -74,9 +79,9 @@ READ_INPUT	ENDP
 PRINT_INPUT	PROC    NEAR
 
       MOV AH, 2h
-      MOV DL, 6Eh
-      INT 21
-      INT 20
+      MOV DL, AL
+      INT 21h
+      INT 20h
 
 	RET
 PRINT_INPUT	ENDP
