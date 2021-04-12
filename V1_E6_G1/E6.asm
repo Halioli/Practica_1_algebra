@@ -25,6 +25,7 @@ MAIN 	PROC 	NEAR
     MOV     BX, 0h
     CALL    READ_INPUT
     CALL    READ_INPUT
+    CALL    HEX_TO_BIN
    
     INT 20			; terminate program
 MAIN	ENDP	
@@ -55,7 +56,9 @@ READ_INPUT 	PROC    NEAR
         CMP   AL, 2Fh
         JL    INPUT_ERROR
         CALL  PRINT_INPUT
-        ADD   BX, AL
+        MOV   AH, 0h
+        ADD   BX, AX
+    RET
       
     INPUT_ERROR:
         MOV AH, 2h
@@ -76,6 +79,13 @@ PRINT_INPUT	PROC    NEAR
 
 	RET
 PRINT_INPUT	ENDP
+
+            PUBLIC  HEX_TO_BIN
+HEX_TO_BIN	PROC    NEAR
+
+
+	RET
+HEX_TO_BIN	ENDP
 
 CODE_SEG 	ENDS
 
