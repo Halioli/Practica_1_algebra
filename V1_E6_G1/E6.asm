@@ -8,7 +8,8 @@ SGROUP 		GROUP 	CODE_SEG, DATA_SEG
 ;   Mostri el resultat per pantalla en binari (pots usar el codi que vam resoldre a classe i està penjat al campus; veure DIS_N_B.rar)
 
 ; DEFINE YOUR CONSTANTS HERE
-    CONSTANT_1     EQU 04Bh
+    INIT_MASK     EQU 8000h ; 1000 0000 0000 0000
+    ASCII_0		  EQU '0' ; -> ASCII del carÃ cter 0
 
 ; *************************************************************************
 ; The code starts here
@@ -25,7 +26,7 @@ MAIN 	PROC 	NEAR
     MOV     BX, 0h
     CALL    READ_INPUT
     CALL    READ_INPUT
-    CALL    HEX_TO_BIN
+    CALL    DISPLAY_BINARY_NUMBER
    
     INT 20			; terminate program
 MAIN	ENDP	
@@ -80,12 +81,39 @@ PRINT_INPUT	PROC    NEAR
 	RET
 PRINT_INPUT	ENDP
 
-            PUBLIC  HEX_TO_BIN
-HEX_TO_BIN	PROC    NEAR
+
+            PUBLIC  DISPLAY_BINARY_NUMBER
+DISPLAY_BINARY_NUMBER PROC NEAR
+					    ; BL: number
+      MOV DX, INIT_MASK ; The mask
+
+NEW_DIGIT:	  
+	  MOV DL, DH	; Initial mask (DH) -> (DL)
+	  AND DL, BL	; DL = DL & BL
+	  JZ IS_ZERO
+	  MOV DL, 1
+
+IS_ZERO:	  
+      CALL DISPLAY_BINARY_DIGIT
+
+	SHR DH, 1		; Shift mask right (to less significant bits): 1st iteration: 1000 0000 -> 0100 0000
+      CMP DH, 0		; A la novena vegada, DH = 0000 0000 (0h)
+      JNZ NEW_DIGIT
+
+      RET
+DISPLAY_BINARY_NUMBER ENDP
 
 
-	RET
-HEX_TO_BIN	ENDP
+            PUBLIC  DISPLAY_BINARY_DIGIT
+DISPLAY_BINARY_DIGIT 	PROC    NEAR
+						  ; DL may be: 0 / 1
+      add dl, ASCII_0	; dl = dl + ASCII_0   ; Si dl = 0 -> dl = ASCII_0 ; Si dl = 1 -> dl = ASCII_0 + 1 = ASCII_1
+      mov ah, 2
+      int 21h      
+
+      RET
+      
+DISPLAY_BINARY_DIGIT	ENDP
 
 CODE_SEG 	ENDS
 
