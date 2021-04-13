@@ -69,7 +69,6 @@ READ_INPUT 	PROC    NEAR
         MOV AH, 2h
         MOV DL, 46h
         INT 21h
-        INT 20h
         CALL READ_INPUT
         
     RET
@@ -81,7 +80,6 @@ PRINT_INPUT	PROC    NEAR
       MOV AH, 2h
       MOV DL, AL
       INT 21h
-      INT 20h
 
 	RET
 PRINT_INPUT	ENDP
@@ -112,9 +110,9 @@ DISPLAY_BINARY_NUMBER ENDP
             PUBLIC  DISPLAY_BINARY_DIGIT
 DISPLAY_BINARY_DIGIT 	PROC    NEAR
 						  ; DL may be: 0 / 1
-      add dl, ASCII_0	; dl = dl + ASCII_0   ; Si dl = 0 -> dl = ASCII_0 ; Si dl = 1 -> dl = ASCII_0 + 1 = ASCII_1
-      mov ah, 2
-      int 21h      
+      ADD DL, ASCII_0	; dl = dl + ASCII_0   ; Si dl = 0 -> dl = ASCII_0 ; Si dl = 1 -> dl = ASCII_0 + 1 = ASCII_1
+      MOV AH, 2
+      INT 21h      
 
       RET
       
