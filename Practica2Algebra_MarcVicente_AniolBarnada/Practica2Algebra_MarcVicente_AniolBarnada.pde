@@ -44,7 +44,7 @@ void draw() {
 
   PVector sSpring = new PVector(0.0, 0.0, 0.0);
 
-//Print all the particles
+  //Print all the particles
   for (int i = 0; i < numParticle; i++) {
     for (int j = 0; j < numParticle; j++) {
       particles[i][j].drawn();
@@ -52,11 +52,44 @@ void draw() {
     }
   }
 
-//Print all the springs
+  //Print all the springs
   for (int i = 1; i < numSpring; i++) {
-    for (int j = 0; j < numSpring; j++) {
-      springs[i][j].drawn(particles[i][j],particles[i-1][j+1]);
-       
+    for (int j = 1; j < numSpring; j++) {  // NEED TO SEPARATE FIRST COLUMN & LINE
+      // Left spring to particle
+      springs[i][j].drawn(particles[i][j], particles[i - 1][j]);
+      particles[i][j].forceAcumulator.x += sSpring.x;
+      particles[i][j].forceAcumulator.y += sSpring.y;
+      particles[i][j].forceAcumulator.z += sSpring.z;
+      particles[i - 1][j].forceAcumulator.x -= sSpring.x;
+      particles[i - 1][j].forceAcumulator.y -= sSpring.y;
+      particles[i - 1][j].forceAcumulator.z += sSpring.z;
+      
+      // Top spring to particle
+      springs[i][j].drawn(particles[i][j], particles[i][j - 1]);
+      particles[i][j].forceAcumulator.x += sSpring.x;
+      particles[i][j].forceAcumulator.y += sSpring.y;
+      particles[i][j].forceAcumulator.z += sSpring.z;
+      particles[i][j - 1].forceAcumulator.x -= sSpring.x;
+      particles[i][j - 1].forceAcumulator.y -= sSpring.y;
+      particles[i][j - 1].forceAcumulator.z += sSpring.z;
+      
+      // Top left spring to particle
+      springs[i][j].drawn(particles[i][j], particles[i - 1][j - 1]);
+      particles[i][j].forceAcumulator.x += sSpring.x;
+      particles[i][j].forceAcumulator.y += sSpring.y;
+      particles[i][j].forceAcumulator.z += sSpring.z;
+      particles[i - 1][j - 1].forceAcumulator.x -= sSpring.x;
+      particles[i - 1][j - 1].forceAcumulator.y -= sSpring.y;
+      particles[i - 1][j - 1].forceAcumulator.z += sSpring.z;
+      
+      // Top right spring to particle
+      springs[i][j].drawn(particles[i][j], particles[i + 1][j - 1]);
+      particles[i][j].forceAcumulator.x += sSpring.x;
+      particles[i][j].forceAcumulator.y += sSpring.y;
+      particles[i][j].forceAcumulator.z += sSpring.z;
+      particles[i + 1][j - 1].forceAcumulator.x -= sSpring.x;
+      particles[i + 1][j - 1].forceAcumulator.y -= sSpring.y;
+      particles[i + 1][j - 1].forceAcumulator.z += sSpring.z;
     }
   }
   // Spring 1
