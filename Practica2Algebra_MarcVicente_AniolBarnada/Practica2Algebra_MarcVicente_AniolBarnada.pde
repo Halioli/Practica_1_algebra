@@ -55,8 +55,50 @@ void draw() {
   //Print all the springs
   for (int i = 1; i < numSpring; i++) {
     for (int j = 1; j < numSpring; j++) {
-      springs[i][j].drawn(particles[i][j], particles[i-1][j]);
-      springs[i][j].drawn(particles[i-1][j-1], particles[i-1][j]);
+      // Back
+      sSpring = springs[i][j].getStrenght(particles[i][j], particles[i - 1][j]);
+      particles[i][j].forceAcumulator.x += sSpring.x;
+      particles[i][j].forceAcumulator.y += sSpring.y;
+      particles[i][j].forceAcumulator.z += sSpring.z;
+      particles[i - 1][j].forceAcumulator.x -= sSpring.x;
+      particles[i - 1][j].forceAcumulator.y -= sSpring.y;
+      particles[i - 1][j].forceAcumulator.z += sSpring.z;
+
+      // Top      
+      sSpring = springs[i][j].getStrenght(particles[i][j], particles[i][j - 1]);
+      particles[i][j].forceAcumulator.x += sSpring.x;
+      particles[i][j].forceAcumulator.y += sSpring.y;
+      particles[i][j].forceAcumulator.z += sSpring.z;
+      particles[i][j - 1].forceAcumulator.x -= sSpring.x;
+      particles[i][j - 1].forceAcumulator.y -= sSpring.y;
+      particles[i][j - 1].forceAcumulator.z += sSpring.z;
+
+      // Top left
+      sSpring = springs[i][j].getStrenght(particles[i][j], particles[i - 1][j - 1]);
+      particles[i][j].forceAcumulator.x += sSpring.x;
+      particles[i][j].forceAcumulator.y += sSpring.y;
+      particles[i][j].forceAcumulator.z += sSpring.z;
+      particles[i - 1][j - 1].forceAcumulator.x -= sSpring.x;
+      particles[i - 1][j - 1].forceAcumulator.y -= sSpring.y;
+      particles[i - 1][j - 1].forceAcumulator.z += sSpring.z;
+
+      // Top right
+      if (i != 9) {
+        sSpring = springs[i][j].getStrenght(particles[i][j], particles[i + 1][j - 1]);
+        particles[i][j].forceAcumulator.x += sSpring.x;
+        particles[i][j].forceAcumulator.y += sSpring.y;
+        particles[i][j].forceAcumulator.z += sSpring.z;
+        particles[i + 1][j - 1].forceAcumulator.x -= sSpring.x;
+        particles[i + 1][j - 1].forceAcumulator.y -= sSpring.y;
+        particles[i + 1][j - 1].forceAcumulator.z += sSpring.z;
+      }
+
+      // Draw
+      springs[i][j].drawn(particles[i][j], particles[i - 1][j]);
+      springs[i][j].drawn(particles[i][j], particles[i][j - 1]);
+      springs[i][j].drawn(particles[i][j], particles[i - 1][j - 1]);
+      if (i != 9)
+        springs[i][j].drawn(particles[i][j], particles[i + 1][j - 1]);
     }
   }
   // Spring 1

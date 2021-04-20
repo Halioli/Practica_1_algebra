@@ -10,7 +10,7 @@ class Spring {
     equilibriumDistanceZ = dZ;
   }
 
-  PVector getStrenght (Particle p0, Particle p1, Particle p2) {
+  PVector getStrenght (Particle p0, Particle p1) {
     PVector f = new PVector(0.0, 0.0, 0.0);
 
     // Hooke
