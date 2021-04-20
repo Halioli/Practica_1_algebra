@@ -2,7 +2,7 @@
 
 // VARIABLES
 int numParticle = 10;
-int numSpring = 9;
+int numSpring = 10;
 Particle[][] particles = new Particle[numParticle][numParticle];
 Spring[][] springs = new Spring[numSpring][numSpring];
 
@@ -44,7 +44,7 @@ void draw() {
 
   PVector sSpring = new PVector(0.0, 0.0, 0.0);
 
-//Print all the particles
+  //Print all the particles
   for (int i = 0; i < numParticle; i++) {
     for (int j = 0; j < numParticle; j++) {
       particles[i][j].drawn();
@@ -52,11 +52,11 @@ void draw() {
     }
   }
 
-//Print all the springs
+  //Print all the springs
   for (int i = 1; i < numSpring; i++) {
-    for (int j = 0; j < numSpring; j++) {
-      springs[i][j].drawn(particles[i][j],particles[i-1][j+1]);
-       
+    for (int j = 1; j < numSpring; j++) {
+      springs[i][j].drawn(particles[i][j], particles[i-1][j]);
+      springs[i][j].drawn(particles[i-1][j-1], particles[i-1][j]);
     }
   }
   // Spring 1
