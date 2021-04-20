@@ -19,7 +19,11 @@ void setup() {
   for (int i = 0; i < numParticle; i++) {
     for (int j = 0; j < numParticle; j++) {
 
-      particles[i][j] = new Particle (new PVector(i + counterI, j + counterJ, 0.0), new PVector(0.0, 0.0, 0.0), true);
+      if (j == 0 && i==0 || j==0 && i==9)
+        particles[i][j] = new Particle (new PVector(i + counterI, j + counterJ, 0.0), new PVector(0.0, 0.0, 0.0), true);
+      else { 
+        particles[i][j] = new Particle (new PVector(i + counterI, j + counterJ, 0.0), new PVector(0.0, 0.0, 0.0), false);
+      }
       counterJ += 30;
     }
     counterI += 30;
@@ -30,7 +34,7 @@ void setup() {
   for (int i = 0; i < numSpring; i++) {
     for (int j = 0; j < numSpring; j++) {
 
-      springs[i][j] = new Spring (0.2, i + counterI, j + counterJ, 0);
+      springs[i][j] = new Spring (0.2, 50.0, 100.0, 50.0);
       counterJ += 30;
     }
     counterI += 30;
@@ -42,8 +46,6 @@ void setup() {
 void draw() {
   background(0);
 
-  PVector sSpring = new PVector(0.0, 0.0, 0.0);
-
   //Print all the particles
   for (int i = 0; i < numParticle; i++) {
     for (int j = 0; j < numParticle; j++) {
@@ -53,6 +55,13 @@ void draw() {
   }
 
   //Print all the springs
+  PrintSprings();
+}
+
+void PrintSprings() {
+
+  PVector sSpring = new PVector(0.0, 0.0, 0.0);
+
   for (int i = 0; i < numSpring; i++) {
     for (int j = 1; j < numSpring; j++) {
       // Back
@@ -63,7 +72,7 @@ void draw() {
         particles[i][j].forceAcumulator.z += sSpring.z;
         particles[i - 1][j].forceAcumulator.x -= sSpring.x;
         particles[i - 1][j].forceAcumulator.y -= sSpring.y;
-        particles[i - 1][j].forceAcumulator.z += sSpring.z;
+        particles[i - 1][j].forceAcumulator.z -= sSpring.z;
       }
 
       // Top      
@@ -73,7 +82,7 @@ void draw() {
       particles[i][j].forceAcumulator.z += sSpring.z;
       particles[i][j - 1].forceAcumulator.x -= sSpring.x;
       particles[i][j - 1].forceAcumulator.y -= sSpring.y;
-      particles[i][j - 1].forceAcumulator.z += sSpring.z;
+      particles[i][j - 1].forceAcumulator.z -= sSpring.z;
 
       // Top left
       if (i != 0) {
@@ -83,7 +92,7 @@ void draw() {
         particles[i][j].forceAcumulator.z += sSpring.z;
         particles[i - 1][j - 1].forceAcumulator.x -= sSpring.x;
         particles[i - 1][j - 1].forceAcumulator.y -= sSpring.y;
-        particles[i - 1][j - 1].forceAcumulator.z += sSpring.z;
+        particles[i - 1][j - 1].forceAcumulator.z -= sSpring.z;
       }
 
       // Top right
@@ -94,7 +103,7 @@ void draw() {
         particles[i][j].forceAcumulator.z += sSpring.z;
         particles[i + 1][j - 1].forceAcumulator.x -= sSpring.x;
         particles[i + 1][j - 1].forceAcumulator.y -= sSpring.y;
-        particles[i + 1][j - 1].forceAcumulator.z += sSpring.z;
+        particles[i + 1][j - 1].forceAcumulator.z -= sSpring.z;
       }
 
       // Draw

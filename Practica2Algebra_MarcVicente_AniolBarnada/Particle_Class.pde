@@ -13,7 +13,7 @@ class Particle {
     forceAcumulator = new PVector(0.0, 0.0, 0.0);
     mass = 1.0;
     size = 5.0;
-    frictionConstant = 0.01;
+    frictionConstant = 0.1;
     isStatic = sta;
   }
 
