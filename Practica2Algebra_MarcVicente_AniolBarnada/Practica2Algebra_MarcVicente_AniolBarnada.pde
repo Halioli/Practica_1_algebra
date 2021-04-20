@@ -62,6 +62,21 @@ void PrintSprings() {
 
   PVector sSpring = new PVector(0.0, 0.0, 0.0);
 
+  // First line
+  for (int i = 0; i < numSpring; i++) {
+    for (int j = 0; j < numSpring; j++) {
+      if (i != 0) {
+        sSpring = springs[i][j].getStrenght(particles[i][j], particles[i - 1][j]);
+        particles[i][j].forceAcumulator.x += sSpring.x;
+        particles[i][j].forceAcumulator.y += sSpring.y;
+        particles[i][j].forceAcumulator.z += sSpring.z;
+        particles[i - 1][j].forceAcumulator.x -= sSpring.x;
+        particles[i - 1][j].forceAcumulator.y -= sSpring.y;
+        particles[i - 1][j].forceAcumulator.z -= sSpring.z;
+      }
+    }
+  }
+
   for (int i = 0; i < numSpring; i++) {
     for (int j = 1; j < numSpring; j++) {
       // Back
@@ -106,7 +121,7 @@ void PrintSprings() {
         particles[i + 1][j - 1].forceAcumulator.z -= sSpring.z;
       }
 
-      // Draw
+      // Draw //<>//
       if (i != 0)
         springs[i][j].drawn(particles[i][j], particles[i - 1][j]);
 
