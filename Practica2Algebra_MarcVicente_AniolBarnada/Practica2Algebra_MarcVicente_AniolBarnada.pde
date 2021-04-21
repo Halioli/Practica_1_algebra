@@ -73,6 +73,8 @@ void PrintSprings() {
         particles[i - 1][j].forceAcumulator.x -= sSpring.x;
         particles[i - 1][j].forceAcumulator.y -= sSpring.y;
         particles[i - 1][j].forceAcumulator.z -= sSpring.z;
+        
+        springs[i][j].drawn(particles[i][j], particles[i - 1][j]);
       }
     }
   }
