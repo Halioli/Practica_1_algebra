@@ -1,8 +1,8 @@
-// PRACTICA 2: ENUNCIAT 1 
+// PRACTICA 2: ENUNCIAT 1  //<>//
 
 // VARIABLES
-int numParticle = 10;
-int numSpring = 10;
+int numParticle = 5;
+int numSpring = 5;
 Particle[][] particles = new Particle[numParticle][numParticle];
 Spring[][] springs = new Spring[numSpring][numSpring];
 
@@ -19,7 +19,7 @@ void setup() {
   for (int i = 0; i < numParticle; i++) {
     for (int j = 0; j < numParticle; j++) {
 
-      if (j == 0 && i==0 || j==0 && i==9)
+      if (j == 0 && i==0 || j==0 && i== numParticle -1 )
         particles[i][j] = new Particle (new PVector(i + counterI, j + counterJ, 0.0), new PVector(0.0, 0.0, 0.0), true);
       else { 
         particles[i][j] = new Particle (new PVector(i + counterI, j + counterJ, 0.0), new PVector(0.0, 0.0, 0.0), false);
@@ -34,7 +34,7 @@ void setup() {
   for (int i = 0; i < numSpring; i++) {
     for (int j = 0; j < numSpring; j++) {
 
-      springs[i][j] = new Spring (0.2, 50.0, 100.0, 50.0);
+      springs[i][j] = new Spring (0.5, 30.0, 20.0, 30.0);
       counterJ += 30;
     }
     counterI += 30;
@@ -67,13 +67,9 @@ void PrintSprings() {
     for (int j = 0; j < numSpring; j++) {
       if (i != 0) {
         sSpring = springs[i][j].getStrenght(particles[i][j], particles[i - 1][j]);
-        particles[i][j].forceAcumulator.x += sSpring.x;
-        particles[i][j].forceAcumulator.y += sSpring.y;
-        particles[i][j].forceAcumulator.z += sSpring.z;
-        particles[i - 1][j].forceAcumulator.x -= sSpring.x;
-        particles[i - 1][j].forceAcumulator.y -= sSpring.y;
-        particles[i - 1][j].forceAcumulator.z -= sSpring.z;
-        
+        particles[i][j].forceAcumulator.add(sSpring);
+        particles[i - 1][j].forceAcumulator.sub(sSpring);
+
         springs[i][j].drawn(particles[i][j], particles[i - 1][j]);
       }
     }
@@ -84,46 +80,30 @@ void PrintSprings() {
       // Back
       if (i != 0) {
         sSpring = springs[i][j].getStrenght(particles[i][j], particles[i - 1][j]);
-        particles[i][j].forceAcumulator.x += sSpring.x;
-        particles[i][j].forceAcumulator.y += sSpring.y;
-        particles[i][j].forceAcumulator.z += sSpring.z;
-        particles[i - 1][j].forceAcumulator.x -= sSpring.x;
-        particles[i - 1][j].forceAcumulator.y -= sSpring.y;
-        particles[i - 1][j].forceAcumulator.z -= sSpring.z;
+        particles[i][j].forceAcumulator.add(sSpring);
+        particles[i - 1][j].forceAcumulator.sub(sSpring);
       }
 
       // Top      
       sSpring = springs[i][j].getStrenght(particles[i][j], particles[i][j - 1]);
-      particles[i][j].forceAcumulator.x += sSpring.x;
-      particles[i][j].forceAcumulator.y += sSpring.y;
-      particles[i][j].forceAcumulator.z += sSpring.z;
-      particles[i][j - 1].forceAcumulator.x -= sSpring.x;
-      particles[i][j - 1].forceAcumulator.y -= sSpring.y;
-      particles[i][j - 1].forceAcumulator.z -= sSpring.z;
+      particles[i][j].forceAcumulator.add(sSpring);
+      particles[i][j - 1].forceAcumulator.sub(sSpring);
 
       // Top left
       if (i != 0) {
         sSpring = springs[i][j].getStrenght(particles[i][j], particles[i - 1][j - 1]);
-        particles[i][j].forceAcumulator.x += sSpring.x;
-        particles[i][j].forceAcumulator.y += sSpring.y;
-        particles[i][j].forceAcumulator.z += sSpring.z;
-        particles[i - 1][j - 1].forceAcumulator.x -= sSpring.x;
-        particles[i - 1][j - 1].forceAcumulator.y -= sSpring.y;
-        particles[i - 1][j - 1].forceAcumulator.z -= sSpring.z;
+        particles[i][j].forceAcumulator.add(sSpring);
+        particles[i - 1][j - 1].forceAcumulator.sub(sSpring);
       }
 
       // Top right
-      if (i != 9) {
+      if (i != numParticle - 1) {
         sSpring = springs[i][j].getStrenght(particles[i][j], particles[i + 1][j - 1]);
-        particles[i][j].forceAcumulator.x += sSpring.x;
-        particles[i][j].forceAcumulator.y += sSpring.y;
-        particles[i][j].forceAcumulator.z += sSpring.z;
-        particles[i + 1][j - 1].forceAcumulator.x -= sSpring.x;
-        particles[i + 1][j - 1].forceAcumulator.y -= sSpring.y;
-        particles[i + 1][j - 1].forceAcumulator.z -= sSpring.z;
+        particles[i][j].forceAcumulator.add(sSpring);
+        particles[i + 1][j - 1].forceAcumulator.sub(sSpring);
       }
 
-      // Draw //<>//
+      // Draw
       if (i != 0)
         springs[i][j].drawn(particles[i][j], particles[i - 1][j]);
 
@@ -132,7 +112,7 @@ void PrintSprings() {
       if (i != 0)
         springs[i][j].drawn(particles[i][j], particles[i - 1][j - 1]);
 
-      if (i != 9)
+      if (i != numParticle - 1)
         springs[i][j].drawn(particles[i][j], particles[i + 1][j - 1]);
     }
   }

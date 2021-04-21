@@ -13,7 +13,7 @@ class Particle {
     forceAcumulator = new PVector(0.0, 0.0, 0.0);
     mass = 1.0;
     size = 5.0;
-    frictionConstant = 0.1;
+    frictionConstant = 1.5;
     isStatic = sta;
   }
 
@@ -24,9 +24,7 @@ class Particle {
 
     if (!isStatic) {
       // Gravity
-      forceAcumulator.x += 0.0;
-      forceAcumulator.y += 9.8;
-      forceAcumulator.z += 0.0;
+      forceAcumulator.add(0.0, 9.8, 0.0);
 
       // Friction
       forceAcumulator.x -= frictionConstant * vel.x;
