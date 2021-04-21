@@ -19,7 +19,7 @@ void setup() {
   for (int i = 0; i < numParticle; i++) {
     for (int j = 0; j < numParticle; j++) {
 
-      if (j == 0 && i==0 || j==0 && i== numParticle -1 )
+      if (j == 0 && i == 0 || j == 0 && i == numParticle - 1)
         particles[i][j] = new Particle (new PVector(i + counterI, j + counterJ, 0.0), new PVector(0.0, 0.0, 0.0), true);
       else { 
         particles[i][j] = new Particle (new PVector(i + counterI, j + counterJ, 0.0), new PVector(0.0, 0.0, 0.0), false);
