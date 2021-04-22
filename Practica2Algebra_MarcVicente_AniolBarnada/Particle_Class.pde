@@ -1,3 +1,9 @@
+// Example Variables
+static final float h = 0.005;
+static final float sigma = 10.0;
+static final float r = 28.0;
+static final float b = 8.0 / 3.0;
+
 class Particle {
   // Atributes
   PVector pos, vel, forceAcumulator;
@@ -43,6 +49,11 @@ class Particle {
       pos.x += vel.x * tInc;
       pos.y += vel.y * tInc;
       pos.z += vel.z * tInc;
+
+      // Runge Kutta 4 solver (WIP)
+      //forceAcumulator.x = sigma * (pos.y - pos.x);
+      //forceAcumulator.y = r * pos.x - pos.y - pos.x * pos.z;
+      //forceAcumulator.z = pos.x * pos.y - b * pos.z;
 
       // Reset
       forceAcumulator.x = 0.0;

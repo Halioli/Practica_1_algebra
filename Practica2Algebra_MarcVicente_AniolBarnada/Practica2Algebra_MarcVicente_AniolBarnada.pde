@@ -3,6 +3,7 @@
 // VARIABLES
 int numParticle = 5;
 int numSpring = 5;
+
 Particle[][] particles = new Particle[numParticle][numParticle];
 Spring[][] springs = new Spring[numSpring][numSpring];
 
@@ -20,9 +21,11 @@ void setup() {
     for (int j = 0; j < numParticle; j++) {
 
       if (j == 0 && i == 0 || j == 0 && i == numParticle - 1)
-        particles[i][j] = new Particle (new PVector(i + counterI, j + counterJ, 0.0), new PVector(0.0, 0.0, 0.0), true);
+        particles[i][j] = new Particle 
+          (new PVector(i + counterI, j + counterJ, 0.0), new PVector(0.0, 0.0, 0.0), true);
       else { 
-        particles[i][j] = new Particle (new PVector(i + counterI, j + counterJ, 0.0), new PVector(0.0, 0.0, 0.0), false);
+        particles[i][j] = new Particle 
+          (new PVector(i + counterI, j + counterJ, 0.0), new PVector(0.0, 0.0, 0.0), false);
       }
       counterJ += 30;
     }
