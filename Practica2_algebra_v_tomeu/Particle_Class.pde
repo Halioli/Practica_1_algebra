@@ -20,7 +20,7 @@ class Particle {
   //Methods
   void move() {
     PVector accel = new PVector(0.0, 0.0, 0.0);
-    float tInc = 0.04;
+    float tInc = 0.02;
 
     if (!isStatic) {
       // Gravity
@@ -52,7 +52,7 @@ class Particle {
   }
 
   void drawn() {
-    strokeWeight(2);
+    strokeWeight(20);
     noFill();
     stroke(255, 0, 0);
     ellipse(pos.x, pos.y, size, size);

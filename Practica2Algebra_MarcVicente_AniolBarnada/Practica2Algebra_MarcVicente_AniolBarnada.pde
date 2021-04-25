@@ -14,7 +14,7 @@ int inputCase;
 float friction = 0.02;
 float gravity = 9.8;
 float third;
-PVector SpringEquilDist = new PVector(30.0, 10.0, 20.0);
+PVector SpringEquilDist = new PVector(20.0, 10.0, 20.0);
 
 // SETUP
 void setup() {
@@ -46,8 +46,7 @@ void setup() {
   for (int i = 0; i < numSpring; i++) {
     for (int j = 0; j < numSpring; j++) {
 
-      springs[i][j] = new Spring (0.5, SpringEquilDist.x, 
-        SpringEquilDist.y, SpringEquilDist.z);
+      springs[i][j] = new Spring (0.5, 20.0, 10.0, 20.0);
 
       counterJ += 30;
     }

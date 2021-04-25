@@ -14,19 +14,19 @@ int inputCase;
 float friction = 0.02;
 float gravity = 9.8;
 float third;
-PVector SpringEquilDist = new PVector(30.0, 20.0, 30.0);
-PVector springEquilH = new PVector(20.0, 0.0, 0.0);
-PVector springEquilV = new PVector(0.0, 0.0, 20.0);
-PVector springEquilD = new PVector(20.0, 0.0, 20.0);
+PVector SpringEquilDist = new PVector(20.0, 20.0, 20.0);
+PVector springEquilH = new PVector(30.0, 0.0, 0.0);
+PVector springEquilV = new PVector(0.0, 30.0, 0.0);
+PVector springEquilD = new PVector(30.0, 30.0, 0.0);
 
-float springK = 0.5;
+float springK = 0.1;
 
 // SETUP
 void setup() {
   size(800, 600, P3D);
 
-  int counterI = 0;
-  int counterJ = 0; 
+  int counterI = 50;
+  int counterJ = -200; 
 
   // Class constructors
 
@@ -44,20 +44,7 @@ void setup() {
       counterJ += 30;
     }
     counterI += 30;
-    counterJ = 0;
-  }
-
-  // Springs
-  for (int i = 0; i < numSpring; i++) {
-    for (int j = 0; j < numSpring; j++) {
-
-      springs[i][j] = new Spring (0.5, SpringEquilDist.x, 
-        SpringEquilDist.y, SpringEquilDist.z);
-
-      counterJ += 30;
-    }
-    counterI += 30;
-    counterJ = 0;
+    counterJ = -200;
   }
 }
 
@@ -84,7 +71,7 @@ void draw() {
   stroke(0, 0, 255);
   line(0.0, 0.0, 0.0, 0.0, 0.0, 250.0);
 
-  //Print all the particles
+  // Print all the particles
   for (int i = 0; i < numParticle; i++) {
     for (int j = 0; j < numParticle; j++) {
       particles[i][j].drawn();
@@ -92,7 +79,7 @@ void draw() {
     }
   }
 
-  //Print all the springs
+  // Print all the springs
   PrintSprings();
 }
 
