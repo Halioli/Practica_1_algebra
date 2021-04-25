@@ -14,7 +14,7 @@ int inputCase;
 float friction = 0.02;
 float gravity = 9.8;
 float third;
-PVector SpringEquilDist = new PVector(30.0, 20.0, 30.0);
+PVector SpringEquilDist = new PVector(30.0, 10.0, 20.0);
 
 // SETUP
 void setup() {
