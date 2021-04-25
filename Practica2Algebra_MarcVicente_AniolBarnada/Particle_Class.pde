@@ -1,9 +1,3 @@
-// Example Variables
-static final float h = 0.005;
-static final float sigma = 10.0;
-static final float r = 28.0;
-static final float b = 8.0 / 3.0;
-
 class Particle {
   // Atributes
   PVector pos, vel, forceAcumulator;
@@ -19,7 +13,7 @@ class Particle {
     forceAcumulator = new PVector(0.0, 0.0, 0.0);
     mass = 1.0;
     size = 5.0;
-    frictionConstant = 1.5;
+    frictionConstant = friction;
     isStatic = sta;
   }
 
@@ -30,7 +24,7 @@ class Particle {
 
     if (!isStatic) {
       // Gravity
-      forceAcumulator.add(0.0, 9.8, 0.0);
+      forceAcumulator.add(0.0, gravity, 0.0);
 
       // Friction
       forceAcumulator.x -= frictionConstant * vel.x;
@@ -49,11 +43,6 @@ class Particle {
       pos.x += vel.x * tInc;
       pos.y += vel.y * tInc;
       pos.z += vel.z * tInc;
-
-      // Runge Kutta 4 solver (WIP)
-      //forceAcumulator.x = sigma * (pos.y - pos.x);
-      //forceAcumulator.y = r * pos.x - pos.y - pos.x * pos.z;
-      //forceAcumulator.z = pos.x * pos.y - b * pos.z;
 
       // Reset
       forceAcumulator.x = 0.0;

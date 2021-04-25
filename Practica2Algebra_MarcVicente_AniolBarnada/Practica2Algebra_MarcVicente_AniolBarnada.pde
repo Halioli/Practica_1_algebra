@@ -1,18 +1,27 @@
 // PRACTICA 2: ENUNCIAT 1  //<>//
 
 // VARIABLES
+int inputKey;
 int numParticle = 5;
 int numSpring = 5;
 
 Particle[][] particles = new Particle[numParticle][numParticle];
 Spring[][] springs = new Spring[numSpring][numSpring];
 
+int inputCase;
+
+// Force variables
+float friction = 0.02;
+float gravity = 9.8;
+float third;
+PVector SpringEquilDist = new PVector(30.0, 20.0, 30.0);
+
 // SETUP
 void setup() {
   size(800, 600, P3D);
 
-  int counterI = width/3;
-  int counterJ = 0; 
+  int counterI = 0;
+  int counterJ = -(height/4); 
 
   // Class constructors
 
@@ -30,14 +39,16 @@ void setup() {
       counterJ += 30;
     }
     counterI += 30;
-    counterJ = 0;
+    counterJ = -(height/4);
   }
 
   // Springs
   for (int i = 0; i < numSpring; i++) {
     for (int j = 0; j < numSpring; j++) {
 
-      springs[i][j] = new Spring (0.5, 30.0, 20.0, 30.0);
+      springs[i][j] = new Spring (0.5, SpringEquilDist.x, 
+        SpringEquilDist.y, SpringEquilDist.z);
+
       counterJ += 30;
     }
     counterI += 30;
@@ -48,6 +59,25 @@ void setup() {
 // DRAW
 void draw() {
   background(0);
+
+  // ISOMETRIC VIEW
+  // 1. Draw everything in the middle of the screen
+  translate(width/2.0, height/2.0, 0.0);
+  rotateX(radians(-35.26));
+  rotateY(radians(-45.0));
+  
+  // 2. Print 
+  // axis to print: X-red,Y-green, Z-blue 
+  strokeWeight(2);
+  // X axis
+  stroke(255, 0, 0);
+  line(0.0, 0.0, 0.0, 250.0, 0.0, 0.0);
+  // Y axis
+  stroke(0, 255, 0);
+  line(0.0, 0.0, 0.0, 0.0, -250.0, 0.0);
+  // Z axis
+  stroke(0, 0, 255);
+  line(0.0, 0.0, 0.0, 0.0, 0.0, 250.0);
 
   //Print all the particles
   for (int i = 0; i < numParticle; i++) {
@@ -61,62 +91,77 @@ void draw() {
   PrintSprings();
 }
 
-void PrintSprings() {
+// KEYS
+void keyPressed() {
+  // get the value of the key pressed
+  inputKey = int(key);  // int('0') = 48
 
-  PVector sSpring = new PVector(0.0, 0.0, 0.0);
+  if (inputCase == 0) {
 
-  // First line
-  for (int i = 0; i < numSpring; i++) {
-    for (int j = 0; j < numSpring; j++) {
-      if (i != 0) {
-        sSpring = springs[i][j].getStrenght(particles[i][j], particles[i - 1][j]);
-        particles[i][j].forceAcumulator.add(sSpring);
-        particles[i - 1][j].forceAcumulator.sub(sSpring);
-
-        springs[i][j].drawn(particles[i][j], particles[i - 1][j]);
-      }
+    switch (inputKey) {
+    case 102: // f = fricció --> 102
+      println("Valid digit: " + key);
+      inputCase = 1;
+      break;
+    case 103: // g = gravetat --> 103
+      println("Valid digit: " + key);
+      inputCase = 2;
+      break;
+    case 116: // t = tercera --> 116
+      println("Valid digit: " + key);
+      inputCase = 3;
+      break;
+    case 120: // x = equilibriumDistanceX --> 120
+      println("Valid digit: " + key);
+      inputCase = 4;
+      break;
+    case 121: // y = equilibriumDistanceY --> 121
+      println("Valid digit: " + key);
+      inputCase = 5;
+      break;
+    case 122: // z = equilibriumDistanceZ --> 122
+      println("Valid digit: " + key);
+      inputCase = 6;
+      break;
+    default:
+      println("Invalid, you pressed: " + key);
+      inputCase = 0;
+      break;
     }
-  }
+  } else {
+    inputKey = inputKey - 48;
+    if (inputKey >= 0 && inputKey <= 9) {
+      println("Valid digit: " + inputKey);
 
-  for (int i = 0; i < numSpring; i++) {
-    for (int j = 1; j < numSpring; j++) {
-      // Back
-      if (i != 0) {
-        sSpring = springs[i][j].getStrenght(particles[i][j], particles[i - 1][j]);
-        particles[i][j].forceAcumulator.add(sSpring);
-        particles[i - 1][j].forceAcumulator.sub(sSpring);
+      switch (inputCase) {
+      case 1: // f = fricció --> 102
+        friction = (float)inputKey/100;
+        break;
+      case 2: // g = gravetat --> 103
+        gravity = (float)inputKey;
+        break;
+      case 3: // t = tercera --> 116
+        third = (float)inputKey;
+        break;
+      case 4: // x = equilibriumDistanceX --> 120
+        SpringEquilDist.x = (float)inputKey;
+        break;
+      case 5: // y = equilibriumDistanceY --> 121
+        SpringEquilDist.y = (float)inputKey;
+        break;
+      case 6: // z = equilibriumDistanceZ --> 122;
+        SpringEquilDist.z = (float)inputKey;
+        break;
+      default:
+        println("Something went wrong");
+        break;
       }
 
-      // Top      
-      sSpring = springs[i][j].getStrenght(particles[i][j], particles[i][j - 1]);
-      particles[i][j].forceAcumulator.add(sSpring);
-      particles[i][j - 1].forceAcumulator.sub(sSpring);
-
-      // Top left
-      if (i != 0) {
-        sSpring = springs[i][j].getStrenght(particles[i][j], particles[i - 1][j - 1]);
-        particles[i][j].forceAcumulator.add(sSpring);
-        particles[i - 1][j - 1].forceAcumulator.sub(sSpring);
-      }
-
-      // Top right
-      if (i != numParticle - 1) {
-        sSpring = springs[i][j].getStrenght(particles[i][j], particles[i + 1][j - 1]);
-        particles[i][j].forceAcumulator.add(sSpring);
-        particles[i + 1][j - 1].forceAcumulator.sub(sSpring);
-      }
-
-      // Draw
-      if (i != 0)
-        springs[i][j].drawn(particles[i][j], particles[i - 1][j]);
-
-      springs[i][j].drawn(particles[i][j], particles[i][j - 1]);
-
-      if (i != 0)
-        springs[i][j].drawn(particles[i][j], particles[i - 1][j - 1]);
-
-      if (i != numParticle - 1)
-        springs[i][j].drawn(particles[i][j], particles[i + 1][j - 1]);
+      inputCase = 0;
+      setup();
+    } else {
+      println("Invalid you pressed " + key);
+      inputCase = 0;
     }
   }
 }
