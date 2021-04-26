@@ -7,7 +7,6 @@ int numSpring = 10;
 
 Particle[][] particles = new Particle[numParticle][numParticle];
 Spring[][] springs = new Spring[numSpring][numSpring];
-//Spring[][] springsV = new Spring[numSpring - 1][numSpring - 1];
 
 int inputCase;
 
@@ -18,7 +17,9 @@ float third;
 PVector SpringEquilDist = new PVector(0, -30, 0);
 float constant = 1;
 
+
 // SETUP
+// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 void setup() {
   size(800, 600, P3D);
 
@@ -48,7 +49,6 @@ void setup() {
     for (int j = 0; j < numSpring; j++) {
 
       springs[i][j] = new Spring (constant, SpringEquilDist.x, SpringEquilDist.y, SpringEquilDist.z);
-      //springsV[i][j] = new Spring (0.5, 20.0, 10.0, 20.0);
 
       counterJ += 30;
     }
@@ -57,30 +57,31 @@ void setup() {
   }
 }
 
+
 // DRAW
+// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 void draw() {
   background(0);
 
   // ISOMETRIC VIEW
-  // 1. Draw everything in the middle of the screen
+  // Draw everything in the middle of the screen
   translate(width/2.0, height/2.0, 0.0);
   rotateX(radians(-35.26));
   rotateY(radians(-45.0));
   
-  // 2. Print 
-  // axis to print: X-red,Y-green, Z-blue 
+  // Print
   strokeWeight(2);
-  // X axis
+  // X axis (red)
   stroke(255, 0, 0);
   line(0.0, 0.0, 0.0, 250.0, 0.0, 0.0);
-  // Y axis
+  // Y axis (green)
   stroke(0, 255, 0);
   line(0.0, 0.0, 0.0, 0.0, -250.0, 0.0);
-  // Z axis
+  // Z axis (blue)
   stroke(0, 0, 255);
   line(0.0, 0.0, 0.0, 0.0, 0.0, 250.0);
 
-  //Print all the particles
+  // Print all the particles
   for (int i = 0; i < numParticle; i++) {
     for (int j = 0; j < numParticle; j++) {
       particles[i][j].drawn();
@@ -92,9 +93,11 @@ void draw() {
   PrintSprings();
 }
 
-// KEYS
+
+// KEY INPUTS
+// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 void keyPressed() {
-  // get the value of the key pressed
+  // Get the value of the key pressed
   inputKey = int(key);  // int('0') = 48
 
   if (inputCase == 0) {
@@ -148,7 +151,7 @@ void keyPressed() {
         SpringEquilDist.x = (float)inputKey;
         break;
       case 5: // y = equilibriumDistanceY --> 121
-        SpringEquilDist.y = (float)-(inputKey + 10);
+        SpringEquilDist.y = (float)-(inputKey * 10);
         break;
       case 6: // z = equilibriumDistanceZ --> 122;
         SpringEquilDist.z = (float)inputKey;
