@@ -2,8 +2,8 @@
 
 // VARIABLES
 int inputKey;
-int numParticle = 5;
-int numSpring = 5;
+int numParticle = 10;
+int numSpring = 10;
 
 Particle[][] particles = new Particle[numParticle][numParticle];
 Spring[][] springs = new Spring[numSpring][numSpring];
@@ -12,10 +12,11 @@ Spring[][] springs = new Spring[numSpring][numSpring];
 int inputCase;
 
 // Force variables
-float friction = 0.02;
+float friction = 0.05;
 float gravity = 9.8;
 float third;
-PVector SpringEquilDist = new PVector(20.0, 10.0, 20.0);
+PVector SpringEquilDist = new PVector(0, -30, 0);
+float constant = 1;
 
 // SETUP
 void setup() {
@@ -29,7 +30,6 @@ void setup() {
   // Particles
   for (int i = 0; i < numParticle; i++) {
     for (int j = 0; j < numParticle; j++) {
-
       if (j == 0 && i == 0 || j == 0 && i == numParticle - 1)
         particles[i][j] = new Particle 
           (new PVector(i + counterI, j + counterJ, 0.0), new PVector(0.0, 0.0, 0.0), true);
@@ -47,7 +47,7 @@ void setup() {
   for (int i = 0; i < numSpring; i++) {
     for (int j = 0; j < numSpring; j++) {
 
-      springs[i][j] = new Spring (0.5, SpringEquilDist.x, SpringEquilDist.y, SpringEquilDist.z);
+      springs[i][j] = new Spring (constant, SpringEquilDist.x, SpringEquilDist.y, SpringEquilDist.z);
       //springsV[i][j] = new Spring (0.5, 20.0, 10.0, 20.0);
 
       counterJ += 30;
@@ -148,7 +148,7 @@ void keyPressed() {
         SpringEquilDist.x = (float)inputKey;
         break;
       case 5: // y = equilibriumDistanceY --> 121
-        SpringEquilDist.y = (float)inputKey;
+        SpringEquilDist.y = (float)-(inputKey + 10);
         break;
       case 6: // z = equilibriumDistanceZ --> 122;
         SpringEquilDist.z = (float)inputKey;
