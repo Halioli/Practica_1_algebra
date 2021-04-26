@@ -23,22 +23,22 @@ void PrintSprings() {
       }
 
       // Top left
-      //if (i != 0 && j != 0) {
-      //  sSpring = springs[i][j].getStrenght(particles[i][j], particles[i - 1][j - 1]);
-      //  particles[i][j].forceAcumulator.add(sSpring);
-      //  particles[i - 1][j - 1].forceAcumulator.sub(sSpring);
-      // Draw
-      //  springs[i][j].drawn(particles[i][j], particles[i - 1][j - 1]);
-      //}
+      if (i != 0 && j != 0) {
+        sSpring = springs[i][j].getStrenght(particles[i][j], particles[i - 1][j - 1]);
+        particles[i][j].forceAcumulator.add(sSpring);
+        particles[i - 1][j - 1].forceAcumulator.sub(sSpring);
+        //Draw
+        springs[i][j].drawn(particles[i][j], particles[i - 1][j - 1]);
+      }
 
-      //// Top right
-      //if (i != numParticle - 1 && j != 0) {
-      //  sSpring = springs[i][j].getStrenght(particles[i][j], particles[i + 1][j - 1]);
-      //  particles[i][j].forceAcumulator.add(sSpring);
-      //  particles[i + 1][j - 1].forceAcumulator.sub(sSpring);
-      // Draw
-      //  springs[i][j].drawn(particles[i][j], particles[i + 1][j - 1]);
-      //}
+      // Top right
+      if (i != numParticle - 1 && j != 0) {
+        sSpring = springs[i][j].getStrenght(particles[i][j], particles[i + 1][j - 1]);
+        particles[i][j].forceAcumulator.add(sSpring);
+        particles[i + 1][j - 1].forceAcumulator.sub(sSpring);
+        //Draw
+        springs[i][j].drawn(particles[i][j], particles[i + 1][j - 1]);
+      }
     }
   }
 }

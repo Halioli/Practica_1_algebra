@@ -6,8 +6,8 @@ int numParticle = 5;
 int numSpring = 5;
 
 Particle[][] particles = new Particle[numParticle][numParticle];
-Spring[][] springsH = new Spring[numSpring][numSpring];
-Spring[][] springsV = new Spring[numSpring - 1][numSpring - 1];
+Spring[][] springs = new Spring[numSpring][numSpring];
+//Spring[][] springsV = new Spring[numSpring - 1][numSpring - 1];
 
 int inputCase;
 
@@ -47,8 +47,8 @@ void setup() {
   for (int i = 0; i < numSpring; i++) {
     for (int j = 0; j < numSpring; j++) {
 
-      springsH[i][j] = new Spring (0.5, 20.0, 10.0, 20.0);
-      springsV[i][j] = new Spring (0.5, 20.0, 10.0, 20.0);
+      springs[i][j] = new Spring (0.5, SpringEquilDist.x, SpringEquilDist.y, SpringEquilDist.z);
+      //springsV[i][j] = new Spring (0.5, 20.0, 10.0, 20.0);
 
       counterJ += 30;
     }
