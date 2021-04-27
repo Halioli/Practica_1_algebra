@@ -23,10 +23,11 @@ float constant = 1;
 void setup() {
   size(800, 600, P3D);
 
+  // Set initial positions
   int counterI = 0;
   int counterJ = -(height/4); 
 
-  // Class constructors
+  // CLASS CONSTRUCTORS
 
   // Particles
   for (int i = 0; i < numParticle; i++) {
@@ -89,7 +90,7 @@ void draw() {
     }
   }
 
-  //Print all the springs
+  // Print all the springs
   PrintSprings();
 }
 
@@ -102,16 +103,17 @@ void keyPressed() {
 
   if (inputCase == 0) {
 
+    // Letter input
     switch (inputKey) {
-    case 102: // f = fricció --> 102
+    case 102: // f = friction --> 102
       println("Valid digit: " + key);
       inputCase = 1;
       break;
-    case 103: // g = gravetat --> 103
+    case 103: // g = gravity --> 103
       println("Valid digit: " + key);
       inputCase = 2;
       break;
-    case 116: // t = tercera --> 116
+    case 116: // t = third --> 116
       println("Valid digit: " + key);
       inputCase = 3;
       break;
@@ -132,28 +134,31 @@ void keyPressed() {
       inputCase = 0;
       break;
     }
+    
   } else {
+    
+    // Number input
     inputKey = inputKey - 48;
     if (inputKey >= 0 && inputKey <= 9) {
       println("Valid digit: " + inputKey);
 
       switch (inputCase) {
-      case 1: // f = fricció --> 102
+      case 1: // friction
         friction = (float)inputKey/100;
         break;
-      case 2: // g = gravetat --> 103
+      case 2: // gravity
         gravity = (float)inputKey;
         break;
-      case 3: // t = tercera --> 116
+      case 3: // third
         third = (float)inputKey;
         break;
-      case 4: // x = equilibriumDistanceX --> 120
+      case 4: // equilibriumDistanceX
         SpringEquilDist.x = (float)inputKey;
         break;
-      case 5: // y = equilibriumDistanceY --> 121
+      case 5: // equilibriumDistanceY
         SpringEquilDist.y = (float)-(inputKey * 10);
         break;
-      case 6: // z = equilibriumDistanceZ --> 122;
+      case 6: // equilibriumDistanceZ
         SpringEquilDist.z = (float)inputKey;
         break;
       default:
@@ -162,8 +167,11 @@ void keyPressed() {
       }
 
       inputCase = 0;
+      
+      // Reset the scene
       setup();
     } else {
+      
       println("Invalid you pressed " + key);
       inputCase = 0;
     }

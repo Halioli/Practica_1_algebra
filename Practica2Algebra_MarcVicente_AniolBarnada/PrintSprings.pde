@@ -4,7 +4,7 @@ void PrintSprings() {
 
   for (int i = 0; i < numSpring; i++) {
     for (int j = 0; j < numSpring; j++) {
-      // Back
+      // Back (H)
       if (i != 0) {
         sSpring = springs[i][j].getStrenght(particles[i][j], particles[i - 1][j]);
         particles[i][j].forceAcumulator.add(sSpring);
@@ -13,7 +13,7 @@ void PrintSprings() {
         springs[i][j].drawn(particles[i][j], particles[i - 1][j]);
       }
 
-      // Top      
+      // Top (V)  
       if (j != 0) {
         sSpring = springs[i][j].getStrenght(particles[i][j], particles[i][j - 1]);
         particles[i][j].forceAcumulator.add(sSpring);
@@ -22,7 +22,7 @@ void PrintSprings() {
         springs[i][j].drawn(particles[i][j], particles[i][j - 1]);
       }
 
-      // Top left
+      // Top left (D)
       if (i != 0 && j != 0) {
         sSpring = springs[i][j].getStrenght(particles[i][j], particles[i - 1][j - 1]);
         particles[i][j].forceAcumulator.add(sSpring);
@@ -31,7 +31,7 @@ void PrintSprings() {
         springs[i][j].drawn(particles[i][j], particles[i - 1][j - 1]);
       }
 
-      // Top right
+      // Top right (D)
       if (i != numParticle - 1 && j != 0) {
         sSpring = springs[i][j].getStrenght(particles[i][j], particles[i + 1][j - 1]);
         particles[i][j].forceAcumulator.add(sSpring);
