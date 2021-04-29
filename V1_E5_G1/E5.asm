@@ -3,7 +3,7 @@ SGROUP 		GROUP 	CODE_SEG, DATA_SEG
 
 ; DEFINE YOUR CONSTANTS HERE
 		INIT_MASK   EQU 8000h ; 1000 0000 0000 0000
-		ASCII_0		  EQU '0' ;-> ASCII del caracter 0
+		ASCII_0		  EQU '0' 	;-> ASCII del caracter 0
 		BASE_NUM		EQU 2h
 		MAX_SQR			EQU 8h
 
@@ -19,7 +19,6 @@ CODE_SEG	SEGMENT PUBLIC
 ; ****************************************
 MAIN 	PROC 	NEAR
 
-      ; INSERT YOUR CODE HERE
       CALL DIVIDE_LOOP
 
 			MOV BX, RES	; Any number
@@ -48,11 +47,10 @@ DIVIDE_LOOP 	PROC    NEAR
 
 			CALL CALCULATE_SQR_BASE_NUM
 			INC SQR
-			CMP SQR, MAX_SQR+1
+			CMP SQR, MAX_SQR
 			JE END_LOOP
 
-			MOV AX, BASE_NUM
-			DIV NUMB
+			DIV NUMB	; AX = SQR_RES (2^x)
 			MOV RES, AX
 
 END_LOOP:
@@ -65,7 +63,7 @@ DIVIDE_LOOP	ENDP
 ; Returns:
 ;   -
 ; Modifies:
-;   ; AX 
+;   ; AX
 ; Uses:
 ;   ; SQR_RES
 ;		; BASE_NUM
@@ -77,6 +75,7 @@ DIVIDE_LOOP	ENDP
 CALCULATE_SQR_BASE_NUM 	PROC    NEAR
 			PUSH CX
 			PUSH DX
+			PUSH SQR_RES
 
 CALCULATE_SQR_LOOP:
 			MOV AX, SQR_RES
@@ -87,8 +86,10 @@ CALCULATE_SQR_LOOP:
 			CMP SQR, CX
 			JNE CALCULATE_SQR_LOOP
 
+			POP SQR_RES
 			POP DX
 			POP CX
+
 			RET
 
 CALCULATE_SQR_BASE_NUM	ENDP
@@ -109,7 +110,7 @@ CALCULATE_SQR_BASE_NUM	ENDP
             PUBLIC  DISPLAY_BINARY_NUMBER
 DISPLAY_BINARY_NUMBER PROC NEAR
 					    ; BL: number
-      MOV DX, INIT_MASK ; The mask
+    MOV DX, INIT_MASK ; The mask
 
 NEW_DIGIT:
 	  MOV DL, DH	; Initial mask (DH) -> (DL)
@@ -118,13 +119,13 @@ NEW_DIGIT:
 	  MOV DL, 1
 
 IS_ZERO:
-      CALL DISPLAY_BINARY_DIGIT
+    CALL DISPLAY_BINARY_DIGIT
 
 	  SHR DH, 1		; Shift mask right (to less significant bits): 1st iteration: 1000 0000 -> 0100 0000
-      CMP DH, 0		; A la novena vegada, DH = 0000 0000 (0h)
-      JNZ NEW_DIGIT
+    CMP DH, 0		; A la novena vegada, DH = 0000 0000 (0h)
+    JNZ NEW_DIGIT
 
-      RET
+    RET
 
 DISPLAY_BINARY_NUMBER ENDP
 
@@ -144,9 +145,9 @@ DISPLAY_BINARY_NUMBER ENDP
             PUBLIC  DISPLAY_BINARY_DIGIT
 DISPLAY_BINARY_DIGIT 	PROC    NEAR
 						; DL may be: 0 / 1
-      add dl, ASCII_0	; dl = dl + ASCII_0; Si dl = 0 -> dl = ASCII_0 ; Si dl = 1 -> dl = ASCII_0 + 1 = ASCII_1
-      mov ah, 2
-      int 21h
+      ADD DL, ASCII_0	; dl = dl + ASCII_0; Si dl = 0 -> dl = ASCII_0 ; Si dl = 1 -> dl = ASCII_0 + 1 = ASCII_1
+      MOV AH, 2
+      INT 21h
 
       RET
 
