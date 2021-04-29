@@ -3,9 +3,9 @@ SGROUP 		GROUP 	CODE_SEG, DATA_SEG
 
 ; DEFINE YOUR CONSTANTS HERE
 		INIT_MASK   EQU 8000h ; 1000 0000 0000 0000
-		ASCII_0		  EQU '0' 	;-> ASCII del caracter 0
-		BASE_NUM		EQU 2h
-		MAX_SQR			EQU 8h
+		ASCII_0     EQU '0'   ;-> ASCII del caracter 0
+		BASE_NUM    EQU 2h
+		MAX_SQR	EQU 8h
 
 
 ; *************************************************************************
@@ -21,8 +21,8 @@ MAIN 	PROC 	NEAR
 
       CALL DIVIDE_LOOP
 
-			MOV BX, RES	; Any number
-			CALL DISPLAY_BINARY_NUMBER
+	MOV BX, RES	; Any number
+	CALL DISPLAY_BINARY_NUMBER
 
 	int 20h			; terminate program
 MAIN	ENDP
@@ -36,30 +36,38 @@ MAIN	ENDP
 ;   ; SQR
 ; Uses:
 ;   ; BASE_NUM
-;		; NUMB
-;		; RES
-;		; SQR
+;   ; NUMB
+;   ; RES
+;   ; SQR
 ; Calls:
 ;   ; CALCULATE_SQR_BASE_NUM
 ; ****************************************
             PUBLIC  DIVIDE_LOOP
 DIVIDE_LOOP 	PROC    NEAR
+	
+      PUSH AX
+      PUSH BX
+      PUSH DX
+		
+DIVISION_LOOP:
+	CALL CALCULATE_SQR_BASE_NUM
 			
-		DIVISION_LOOP:
-			CALL CALCULATE_SQR_BASE_NUM
 			
-			
-			MOV BX, AX
-			MOV AX, NUMB
-			DIV BX	; AX = NUMB(AX)/ BX(2^x)
+	MOV BX, AX
+	MOV AX, NUMB
+	DIV BX	; AX = NUMB(AX)/BX(2^x)
 
-			ADD RES, AX
+	ADD RES, AX
 
-			INC SQR
-			CMP SQR, MAX_SQR
-			JNE DIVISION_LOOP
+	INC SQR
+	CMP SQR, MAX_SQR
+	JNE DIVISION_LOOP
 
-			RET
+      POP DX
+      POP BX
+      POP AX
+
+	RET
 
 DIVIDE_LOOP	ENDP
 
@@ -71,32 +79,32 @@ DIVIDE_LOOP	ENDP
 ;   ; AX
 ; Uses:
 ;   ; SQR_RES
-;		; BASE_NUM
-;		; SQR
+;   ; BASE_NUM
+;   ; SQR
 ; Calls:
 ;   -
 ; ****************************************
             PUBLIC  CALCULATE_SQR_BASE_NUM
 CALCULATE_SQR_BASE_NUM 	PROC    NEAR
-			PUSH CX
-			PUSH DX
-			PUSH SQR_RES
+	PUSH CX
+	PUSH DX
+	PUSH SQR_RES
 
 CALCULATE_SQR_LOOP:
-			MOV AX, SQR_RES
-			MOV BX, BASE_NUM
-			MUL BX
-			MOV SQR_RES, AX
+	MOV AX, SQR_RES
+	MOV BX, BASE_NUM
+	MUL BX
+	MOV SQR_RES, AX
 
-			INC CX
-			CMP SQR, CX
-			JNE CALCULATE_SQR_LOOP
+	INC CX
+	CMP SQR, CX
+	JNE CALCULATE_SQR_LOOP
 
-			POP SQR_RES
-			POP DX
-			POP CX
+	POP SQR_RES
+	POP DX
+	POP CX
 
-			RET
+	RET
 
 CALCULATE_SQR_BASE_NUM	ENDP
 
@@ -165,11 +173,10 @@ CODE_SEG 	ENDS
 ; The data starts here
 ; *************************************************************************
 DATA_SEG	SEGMENT	PUBLIC
-    ; DEFINE YOUR MEMORY HERE
-		NUMB				DB 1 DUP (20h)
-		RES					DW 1 DUP (0h)
-		SQR					DW 1 DUP (0h)
-		SQR_RES				DW 1 DUP (1h)
+		NUMB		DB 1 DUP (20h)
+		RES		DW 1 DUP (0h)
+		SQR		DW 1 DUP (0h)
+		SQR_RES	DW 1 DUP (1h)
 DATA_SEG	ENDS
 
 	END MAIN
