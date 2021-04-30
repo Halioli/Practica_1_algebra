@@ -21,7 +21,7 @@ MAIN 	PROC 	NEAR
 
       CALL DIVIDE_LOOP
 
-	MOV BX, RES	; Any number
+	MOV BX, [RES]	; Any number
 	CALL DISPLAY_BINARY_NUMBER
 
 	int 20h			; terminate program
@@ -54,14 +54,17 @@ DIVISION_LOOP:
 			
 			
 	MOV BX, AX
-	MOV AX, NUMB
+	MOV AX, [NUMB]
 	DIV BX	; AX = NUMB(AX)/BX(2^x)
 
 	ADD RES, AX
 
-	INC SQR
-	CMP SQR, MAX_SQR
-	JNE DIVISION_LOOP
+	INC [SQR]
+	CMP [SQR], [MAX_SQR]
+	JGE DIVISION_LOOP
+
+      MOV BX, [NUMB]
+      ADD [RES], BX
 
       POP DX
       POP BX
@@ -88,19 +91,21 @@ DIVIDE_LOOP	ENDP
 CALCULATE_SQR_BASE_NUM 	PROC    NEAR
 	PUSH CX
 	PUSH DX
-	PUSH SQR_RES
+	PUSH [SQR_RES]
+
+      MOV CX, 0h
 
 CALCULATE_SQR_LOOP:
-	MOV AX, SQR_RES
-	MOV BX, BASE_NUM
-	MUL BX
-	MOV SQR_RES, AX
+	MOV AX, [SQR_RES]
+	MOV BX, [BASE_NUM]
+	MUL BX     ; AX(SQR_RES) * BX(BASE_NUM)
+	MOV [SQR_RES], AX
 
 	INC CX
-	CMP SQR, CX
-	JNE CALCULATE_SQR_LOOP
+	CMP [SQR], CX
+	JGE CALCULATE_SQR_LOOP
 
-	POP SQR_RES
+	POP [SQR_RES]
 	POP DX
 	POP CX
 
@@ -173,9 +178,9 @@ CODE_SEG 	ENDS
 ; The data starts here
 ; *************************************************************************
 DATA_SEG	SEGMENT	PUBLIC
-		NUMB		DB 1 DUP (20h)
+		NUMB		DW 1 DUP (20h)
 		RES		DW 1 DUP (0h)
-		SQR		DW 1 DUP (0h)
+		SQR		DW 1 DUP (1h)
 		SQR_RES	DW 1 DUP (1h)
 DATA_SEG	ENDS
 
