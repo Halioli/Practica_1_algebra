@@ -4,7 +4,6 @@ SGROUP 		GROUP 	CODE_SEG, DATA_SEG
 ; DEFINE YOUR CONSTANTS HERE
 		INIT_MASK   EQU 8000h ; 1000 0000 0000 0000
 		ASCII_0     EQU '0'   ;-> ASCII del caracter 0
-		BASE_NUM    EQU 2h
 		MAX_SQR	EQU 8h
 
 
@@ -28,19 +27,19 @@ MAIN 	PROC 	NEAR
 MAIN	ENDP
 
 ; ****************************************
-; Loops NUMB divided by BASE_NUM squared to SQR untill SQR == 8
+; Loops NUMB divided by BASE_NUM squared to SQR untill SQR == MAX_SQR
 ; Returns:
 ;   -
 ; Modifies:
 ;   ; RES
 ;   ; SQR
 ; Uses:
-;   ; BASE_NUM
 ;   ; NUMB
 ;   ; RES
 ;   ; SQR
+;   ; MAX_SQR
 ; Calls:
-;   ; CALCULATE_SQR_BASE_NUM
+;   -
 ; ****************************************
             PUBLIC  DIVIDE_LOOP
 DIVIDE_LOOP 	PROC    NEAR
@@ -50,22 +49,16 @@ DIVIDE_LOOP 	PROC    NEAR
       PUSH DX
 		
 DIVISION_LOOP:
-	CALL CALCULATE_SQR_BASE_NUM
-			
-			
-	MOV BX, AX
-	MOV AX, [NUMB]
-	DIV BX	; AX = NUMB(AX)/BX(2^x)
+      MOV AX, [NUMB]         ; AX = 0014 (20d)
+      MOV CL, [SQR]          ; CL = from 0 to 8 (exp 2^x)
+      SHR AX, CL             ; 20d = 10100 / 2^CL
 
-	ADD RES, AX
+	ADD [RES], AX
 
 	INC [SQR]
-	CMP [SQR], [MAX_SQR]
-	JGE DIVISION_LOOP
-
-      MOV BX, [NUMB]
-      ADD [RES], BX
-
+	CMP [SQR], [MAX_SQR]   ; Compare SQR == MAX_SQR
+	JL DIVISION_LOOP       ; If not equal jump to DIVISION_LOOP
+                             ; End loop
       POP DX
       POP BX
       POP AX
@@ -73,45 +66,6 @@ DIVISION_LOOP:
 	RET
 
 DIVIDE_LOOP	ENDP
-
-; ****************************************
-; Calculates the base number
-; Returns:
-;   -
-; Modifies:
-;   ; AX
-; Uses:
-;   ; SQR_RES
-;   ; BASE_NUM
-;   ; SQR
-; Calls:
-;   -
-; ****************************************
-            PUBLIC  CALCULATE_SQR_BASE_NUM
-CALCULATE_SQR_BASE_NUM 	PROC    NEAR
-	PUSH CX
-	PUSH DX
-	PUSH [SQR_RES]
-
-      MOV CX, 0h
-
-CALCULATE_SQR_LOOP:
-	MOV AX, [SQR_RES]
-	MOV BX, [BASE_NUM]
-	MUL BX     ; AX(SQR_RES) * BX(BASE_NUM)
-	MOV [SQR_RES], AX
-
-	INC CX
-	CMP [SQR], CX
-	JGE CALCULATE_SQR_LOOP
-
-	POP [SQR_RES]
-	POP DX
-	POP CX
-
-	RET
-
-CALCULATE_SQR_BASE_NUM	ENDP
 
 ; ****************************************
 ; Displays in binary in stdout the 8-bit number in BL
@@ -178,10 +132,9 @@ CODE_SEG 	ENDS
 ; The data starts here
 ; *************************************************************************
 DATA_SEG	SEGMENT	PUBLIC
-		NUMB		DW 1 DUP (20h)
+		NUMB		DW 1 DUP (14h)  ; NUMB = N
+		SQR		DB 1 DUP (0h)
 		RES		DW 1 DUP (0h)
-		SQR		DW 1 DUP (1h)
-		SQR_RES	DW 1 DUP (1h)
 DATA_SEG	ENDS
 
 	END MAIN
