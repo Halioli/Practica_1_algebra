@@ -180,8 +180,8 @@ MAIN	ENDP
 					PUBLIC  INIT_GAME
 INIT_GAME		PROC		NEAR
 
-    MOV [INC_ROW_SNAKE], 0
-    MOV [INC_COL_SNAKE], 0
+    MOV [INC_ROW_SNAKE_HEAD], 0
+    MOV [INC_COL_SNAKE_HEAD], 0
 
 		MOV [INC_ROW_PLAYER], 0
     MOV [INC_COL_PLAYER], 0
@@ -370,8 +370,8 @@ MOVE_SNAKE		PROC		NEAR
 		PUSH AX
 
 		; Load snake coordinates
-		ADD DL, [INC_COL_SNAKE]
-		ADD DH, [INC_ROW_SNAKE]
+		ADD DL, [INC_COL_SNAKE_HEAD]
+		ADD DH, [INC_ROW_SNAKE_HEAD]
 
 		; Move snake on the screen
 		CALL MOVE_CURSOR
@@ -1071,11 +1071,15 @@ CODE_SEG 	ENDS
 
 DATA_SEG	SEGMENT	PUBLIC
 
-    OLD_INTERRUPT_BASE    DW  0, 0  ; Stores the current (system) timer ISR address
+    OLD_INTERRUPT_BASE DW 0, 0  ; Stores the current (system) timer ISR address
 
-    ; (INC_ROW. INC_COL) may be (-1, 0, 1), and determine the direction of movement of the snake
-    INC_ROW_SNAKE DB 0
-    INC_COL_SNAKE DB 0
+    ; (INC_ROW. INC_COL) may be (-1, 0, 1), and determine the direction of movement of the snake's head
+    INC_ROW_SNAKE_HEAD DB 0
+    INC_COL_SNAKE_HEAD DB 0
+
+		; (INC_ROW. INC_COL) may be (-1, 0, 1), and determine the direction of movement of the snake's tail
+    INC_ROW_SNAKE_TAIL DB 0
+    INC_COL_SNAKE_TAIL DB 0
 
 		; (INC_ROW. INC_COL) may be (-1, 0, 1), and determine the direction of movement of the player
 		INC_ROW_PLAYER DB 0
