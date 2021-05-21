@@ -134,7 +134,8 @@ MAIN 	PROC 	NEAR
       MOV [INC_COL_BULLET], 0
       MOV [INC_ROW_BULLET], -1
 
-			CALL MOVE_PLAYER
+			; spawn bullet
+			CALL MOVE_BULLET
 
       JMP END_KEY
 
@@ -470,6 +471,79 @@ MOVE_PLAYER		PROC		NEAR
 
     RET
 MOVE_PLAYER	ENDP
+
+; ****************************************
+; Prints the bullet
+; Entry:
+;		-
+; Returns:
+;		-
+; Modifies:
+;		-
+; Uses:
+;   character: ASCII_BULLET
+;   attribute: ATTR_BULLET
+; Calls:
+;   PRINT_CHAR_ATTR
+; ****************************************
+					PUBLIC PRINT_BULLET
+PRINT_BULLET		PROC		NEAR
+
+    PUSH AX
+    PUSH BX
+    MOV AL, ASCII_BULLET
+    MOV BL, ATTR_BULLET
+    CALL PRINT_CHAR_ATTR
+
+    POP BX
+    POP AX
+    RET
+
+PRINT_BULLET        ENDP
+
+; ****************************************
+; Moves the player based on input
+; Entry:
+;		-
+; Returns:
+;   -
+; Modifies:
+;   NUM_TILES
+;		DL
+;		HL
+; Uses:
+;   INC_COL
+;		INC_ROW
+;		ATTR_PLAYER
+;		NUM_TILES
+; Calls:
+;   MOVE_CURSOR
+;		READ_SCREEN_CHAR
+;		PRINT_SNAKE
+; ****************************************
+					PUBLIC  MOVE_BULLET
+MOVE_BULLET		PROC		NEAR
+
+		PUSH AX
+
+		; Increment the bullet's row
+		ADD DH, [INC_ROW_BULLET]
+
+		; Move bullet on the screen
+		CALL MOVE_CURSOR
+
+		; Check if bullet collided with the field or with itself
+		CALL READ_SCREEN_CHAR
+		CMP AH, ATTR_BULLET
+		JZ END_BULLET
+
+		POP AX
+		RET
+
+	END_BULLET:
+		POP AX
+    RET
+MOVE_BULLET	ENDP
 
 ; ****************************************
 ; Prints character and attribute in the
@@ -978,7 +1052,6 @@ NEW_TIMER_INTERRUPT		PROC		NEAR
     JMP END_ISR
 
 END_ISR:
-
       POP AX
       IRET
 
