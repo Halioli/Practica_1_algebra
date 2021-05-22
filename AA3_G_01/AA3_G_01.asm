@@ -19,15 +19,15 @@ SGROUP 		GROUP 	CODE_SEG, DATA_SEG
 
 ; ASCII / ATTR CODES TO DRAW THE SNAKE
     ASCII_SNAKE     EQU 02Ah
-    ATTR_SNAKE      EQU 070h
+    ATTR_SNAKE      EQU 00Ah
 
 ; ASCII / ATTR CODES TO DRAW THE PLAYER
 		ASCII_PLAYER		EQU 058h
-		ATTR_PLAYER			EQU 007h
+		ATTR_PLAYER			EQU 009h
 
 ; ASCII / ATTR CODES TO DRAW THE BULLET
 		ASCII_BULLET		EQU 021h
-		ATTR_BULLET			EQU 01Eh
+		ATTR_BULLET			EQU 00Eh
 
 ; ASCII / ATTR CODES TO DRAW THE FIELD
     ASCII_FIELD    EQU 020h
@@ -156,14 +156,14 @@ MAIN 	PROC 	NEAR
       CMP AL, ASCII_YES_LOWERCASE
       JZ MAIN_GO
 
-	INT 20h
+			INT 20h
 
 MAIN	ENDP
 
 ; ****************************************
 ; Reset internal variables
 ; Entry:
-;
+;		-
 ; Returns:
 ;   -
 ; Modifies:
@@ -195,6 +195,7 @@ INIT_GAME		PROC		NEAR
     MOV [END_GAME], FALSE
 
     RET
+
 INIT_GAME	ENDP
 
 ; ****************************************
@@ -202,16 +203,16 @@ INIT_GAME	ENDP
 ; If char is not available, blocks until a key is pressed
 ; The char is not output to screen
 ; Entry:
-;
+;		-
 ; Returns:
 ;   AL: ASCII CODE
 ;   AH: ATTRIBUTE
 ; Modifies:
-;
+;		-
 ; Uses:
-;
+;		-
 ; Calls:
-;
+;		-
 ; ****************************************
 					PUBLIC  READ_CHAR
 READ_CHAR		PROC		NEAR
@@ -223,18 +224,17 @@ READ_CHAR		PROC		NEAR
 
 READ_CHAR ENDP
 
-
 ; ****************************************
 ; Read character and attribute at cursor position, page 0
 ; Entry:
-;
+;		-
 ; Returns:
 ;   AL: ASCII CODE
 ;   AH: ATTRIBUTE
 ; Modifies:
-;
+;		-
 ; Uses:
-;
+;		-
 ; Calls:
 ;   int 10h, service AH=8
 ; ****************************************
@@ -255,11 +255,11 @@ READ_SCREEN_CHAR  ENDP
 ; ****************************************
 ; Draws the rectangular field of the game
 ; Entry:
-;
+;		-
 ; Returns:
-;
+;		-
 ; Modifies:
-;
+;		-
 ; Uses:
 ;   Coordinates of the rectangle:
 ;    left - top: (FIELD_R1, FIELD_C1)
@@ -319,11 +319,11 @@ DRAW_FIELD       ENDP
 ; ****************************************
 ; Prints a new tile of the snake, at the current cursos position
 ; Entry:
-;
+;		-
 ; Returns:
-;
+;		-
 ; Modifies:
-;
+;		-
 ; Uses:
 ;   character: ASCII_SNAKE
 ;   attribute: ATTR_SNAKE
@@ -379,8 +379,8 @@ MOVE_SNAKE		PROC		NEAR
 
 		; Check if snake collided with the field or with itself
 		CALL READ_SCREEN_CHAR
-		CMP AH, ATTR_SNAKE
-		JZ END_SNAKES
+		CMP AH, ATTR_PLAYER
+		JZ END_SNAKE
 
 		; Increment the length of the snake
 		INC [NUM_TILES]
@@ -389,11 +389,12 @@ MOVE_SNAKE		PROC		NEAR
 		POP AX
 		RET
 
-	END_SNAKES:
+	END_SNAKE:
 		POP AX
 	  MOV [END_GAME], TRUE
 
     RET
+
 MOVE_SNAKE	ENDP
 
 ; ****************************************
@@ -470,6 +471,7 @@ MOVE_PLAYER		PROC		NEAR
 	  MOV [END_GAME], TRUE
 
     RET
+
 MOVE_PLAYER	ENDP
 
 ; ****************************************
@@ -543,6 +545,7 @@ MOVE_BULLET		PROC		NEAR
 	END_BULLET:
 		POP AX
     RET
+
 MOVE_BULLET	ENDP
 
 ; ****************************************
@@ -654,7 +657,7 @@ INIT_SCREEN		PROC		NEAR
       POP CX
       POP BX
       POP AX
-	RET
+			RET
 
 INIT_SCREEN		ENDP
 
@@ -1019,6 +1022,7 @@ PRINT_SCORE        ENDP
 ;   MOVE_CURSOR
 ;   READ_SCREEN_CHAR
 ;   PRINT_SNAKE
+;		MOVE_SNAKE
 ; ****************************************
 					PUBLIC NEW_TIMER_INTERRUPT
 NEW_TIMER_INTERRUPT		PROC		NEAR
@@ -1032,6 +1036,8 @@ NEW_TIMER_INTERRUPT		PROC		NEAR
     ; Do nothing if game is stopped
     CMP [START_GAME], TRUE
     JNZ END_ISR
+
+		CALL MOVE_SNAKE
 
     ; Increment INC_COUNT and check if worm position must be updated (INT_COUNT == DIV_COUNT)
     INC [INT_COUNT]
