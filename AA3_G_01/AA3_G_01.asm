@@ -106,8 +106,6 @@ MAIN 	PROC 	NEAR
       JZ LEFT_KEY
       CMP AL, ASCII_UP
       JZ UP_KEY
-      CMP AL, ASCII_DOWN
-      JZ DOWN_KEY
 
       JMP MAIN_LOOP
 
