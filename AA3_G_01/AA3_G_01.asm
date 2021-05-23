@@ -18,8 +18,9 @@ SGROUP 		GROUP 	CODE_SEG, DATA_SEG
     ASCII_QUIT        EQU 071h ; 'q'
 
 ; ASCII / ATTR CODES TO DRAW THE SNAKE
-    ASCII_SNAKE     EQU 02Ah
-    ATTR_SNAKE      EQU 00Ah
+    ASCII_SNAKE     	EQU 02Ah
+    ATTR_SNAKE      	EQU 00Ah
+		MAX_LENGHT_SNAKE	EQU 00Ah
 
 ; ASCII / ATTR CODES TO DRAW THE PLAYER
 		ASCII_PLAYER		EQU 058h
@@ -72,9 +73,18 @@ MAIN 	PROC 	NEAR
       MOV DH, SCREEN_MAX_ROWS/2
       MOV DL, SCREEN_MAX_COLS/2
 
+			;MOV [POS_ROW_PLAYER], SCREEN_MAX_ROWS-2
+			;MOV [POS_COL_PLAYER], SCREEN_MAX_COLS/2
+
+			;MOV [POS_ROW_SNAKE_HEAD], 02h
+			;MOV [POS_COL_SNAKE_HEAD], SCREEN_MAX_COLS/2
+
       CALL MOVE_CURSOR
 
   MAIN_LOOP:
+			; The game is on!
+			MOV [START_GAME], TRUE
+
       CMP [END_GAME], TRUE
       JZ END_PROG
 
@@ -96,9 +106,6 @@ MAIN 	PROC 	NEAR
       JNZ MAIN_LOOP
 
       CALL READ_CHAR
-
-      ; The game is on!
-      MOV [START_GAME], TRUE
 
       CMP AL, ASCII_RIGHT
       JZ RIGHT_KEY
@@ -367,6 +374,10 @@ PRINT_SNAKE        ENDP
 MOVE_SNAKE		PROC		NEAR
 
 		PUSH AX
+		PUSH DX
+
+		MOV DL, [POS_COL_SNAKE_HEAD]
+		MOV DH, [POS_ROW_SNAKE_HEAD]
 
 		; Load snake coordinates
 		ADD DL, [INC_COL_SNAKE_HEAD]
@@ -375,19 +386,63 @@ MOVE_SNAKE		PROC		NEAR
 		; Move snake on the screen
 		CALL MOVE_CURSOR
 
-		; Check if snake collided with the field or with itself
+		; Check if snake collided with the player or field
 		CALL READ_SCREEN_CHAR
 		CMP AH, ATTR_PLAYER
 		JZ END_SNAKE
+
+		; Set snake's head position
+		MOV [POS_COL_SNAKE_HEAD], DL
+		MOV [POS_ROW_SNAKE_HEAD], DH
+
+		CMP AH, ATTR_FIELD
+		JNZ MOVE_TAIL
+
+		MOV [INC_COL_SNAKE_HEAD], 0
+		MOV [INC_ROW_SNAKE_HEAD], 1
+
+		POP DX
+
+	MOVE_TAIL:
+		PUSH DX
+
+		MOV DL, [POS_COL_SNAKE_TAIL]
+		MOV DH, [POS_ROW_SNAKE_TAIL]
+
+		; Load snake's tail coordinates
+		ADD DL, [INC_COL_SNAKE_TAIL]
+		ADD DH, [INC_ROW_SNAKE_TAIL]
+
+		; Move the snake's tail on the screen
+		CALL MOVE_CURSOR
+
+		; Check if the snake's tail collided with the field
+		CALL READ_SCREEN_CHAR
+		CMP AH, ATTR_FIELD
+		JZ NEXT_ROW_TAIL
+
+		; Set snale's tail position
+		MOV [POS_COL_SNAKE_TAIL], DL
+		MOV [POS_ROW_SNAKE_TAIL], DH
 
 		; Increment the length of the snake
 		INC [NUM_TILES]
 		CALL PRINT_SNAKE
 
+		POP DX
+		POP AX
+		RET
+
+	NEXT_ROW_TAIL:
+		MOV [INC_COL_SNAKE_TAIL], 0
+		MOV [INC_ROW_SNAKE_TAIL], 1
+
+		POP DX
 		POP AX
 		RET
 
 	END_SNAKE:
+		POP DX
 		POP AX
 	  MOV [END_GAME], TRUE
 
@@ -448,6 +503,10 @@ PRINT_PLAYER        ENDP
 MOVE_PLAYER		PROC		NEAR
 
 		PUSH AX
+		PUSH DX
+
+		MOV DL, [POS_COL_PLAYER]
+		MOV DH, [POS_ROW_PLAYER]
 
 		; Load player coordinates
 		ADD DL, [INC_COL_PLAYER]
@@ -461,10 +520,15 @@ MOVE_PLAYER		PROC		NEAR
 		CMP AH, ATTR_PLAYER
 		JZ END_PLAYER
 
+		MOV [POS_COL_PLAYER], DL
+		MOV [POS_ROW_PLAYER], DH
+
+		POP DX
 		POP AX
 		RET
 
 	END_PLAYER:
+		POP DX
 		POP AX
 	  MOV [END_GAME], TRUE
 
@@ -525,6 +589,9 @@ PRINT_BULLET        ENDP
 MOVE_BULLET		PROC		NEAR
 
 		PUSH AX
+		PUSH DX
+
+		MOV DH, [POS_ROW_BULLET]
 
 		; Increment the bullet's row
 		ADD DH, [INC_ROW_BULLET]
@@ -537,10 +604,14 @@ MOVE_BULLET		PROC		NEAR
 		CMP AH, ATTR_BULLET
 		JZ END_BULLET
 
+		MOV [POS_ROW_BULLET], DH
+
+		POP DX
 		POP AX
 		RET
 
 	END_BULLET:
+		POP DX
 		POP AX
     RET
 
@@ -1035,6 +1106,11 @@ NEW_TIMER_INTERRUPT		PROC		NEAR
     CMP [START_GAME], TRUE
     JNZ END_ISR
 
+		MOV DH, POS_COL_BULLET
+		MOV DL, POS_ROW_BULLET-1
+
+		CALL MOVE_BULLET
+
 		CALL MOVE_SNAKE
 
     ; Increment INC_COUNT and check if worm position must be updated (INT_COUNT == DIV_COUNT)
@@ -1153,18 +1229,26 @@ DATA_SEG	SEGMENT	PUBLIC
     ; (INC_ROW. INC_COL) may be (-1, 0, 1), and determine the direction of movement of the snake's head
     INC_ROW_SNAKE_HEAD DB 0
     INC_COL_SNAKE_HEAD DB 0
+		POS_ROW_SNAKE_HEAD DB 2
+		POS_COL_SNAKE_HEAD DB SCREEN_MAX_COLS/2
 
 		; (INC_ROW. INC_COL) may be (-1, 0, 1), and determine the direction of movement of the snake's tail
     INC_ROW_SNAKE_TAIL DB 0
     INC_COL_SNAKE_TAIL DB 0
+		POS_ROW_SNAKE_TAIL DB 2
+		POS_COL_SNAKE_TAIL DB 2
 
 		; (INC_ROW. INC_COL) may be (-1, 0, 1), and determine the direction of movement of the player
 		INC_ROW_PLAYER DB 0
     INC_COL_PLAYER DB 0
+		POS_ROW_PLAYER DB SCREEN_MAX_ROWS/2
+		POS_COL_PLAYER DB SCREEN_MAX_ROWS-2
 
 		; (INC_ROW. INC_COL) may be (-1, 0, 1), and determine the direction of movement of the bullet
 		INC_ROW_BULLET DB 0
     INC_COL_BULLET DB 0
+		POS_ROW_BULLET DB 0
+		POS_COL_BULLET DB 0
 
     NUM_TILES DW 0              ; SNAKE LENGTH
     NUM_TILES_INC_SPEED DB 20   ; THE SPEED IS INCREASED EVERY 'NUM_TILES_INC_SPEED'
