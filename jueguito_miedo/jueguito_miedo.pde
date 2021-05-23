@@ -1,15 +1,23 @@
-//Scary Maze Game 
+// Scary Game 
+
+// VARIABLES
+// Camera
+FPCamera camera;
+
 PImage earth; 
 PShape globe;
 
-//Variables
-FPCamera camera;
-
-//Functions
+// FUNCTIONS
 void setup() {
   size(1200, 800, P3D);
+  
+  // Instantiate camera
   camera = new FPCamera();
-  earth = loadImage();
+  
+  // Load image
+  earth = loadImage("cacoOscar.png");
+  
+  // Create shape & set it's texture
   globe = createShape(RECT, 0, 0, 200, 200); 
   globe.setTexture(earth);
   noStroke();
@@ -19,8 +27,8 @@ void draw() {
   lights();
   background(0);
   camera.camTransformations();
-  //Draws environment
   
+  // Draw the environment
   rotateX(radians(90));
   translate(0,400,-600);
   shape(globe);
