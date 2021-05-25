@@ -73,18 +73,9 @@ MAIN 	PROC 	NEAR
       MOV DH, SCREEN_MAX_ROWS/2
       MOV DL, SCREEN_MAX_COLS/2
 
-			;MOV [POS_ROW_PLAYER], SCREEN_MAX_ROWS-2
-			;MOV [POS_COL_PLAYER], SCREEN_MAX_COLS/2
-
-			;MOV [POS_ROW_SNAKE_HEAD], 02h
-			;MOV [POS_COL_SNAKE_HEAD], SCREEN_MAX_COLS/2
-
       CALL MOVE_CURSOR
 
   MAIN_LOOP:
-			; The game is on!
-			MOV [START_GAME], TRUE
-
       CMP [END_GAME], TRUE
       JZ END_PROG
 
@@ -114,12 +105,14 @@ MAIN 	PROC 	NEAR
       CMP AL, ASCII_UP
       JZ UP_KEY
 
+			; The game is on!
+			MOV [START_GAME], TRUE
+
       JMP MAIN_LOOP
 
   RIGHT_KEY:
 			; Move right
       MOV [INC_COL_PLAYER], 1
-      MOV [INC_ROW_PLAYER], 0
 
       CALL MOVE_PLAYER
 
@@ -128,18 +121,28 @@ MAIN 	PROC 	NEAR
   LEFT_KEY:
 			; Move left
       MOV [INC_COL_PLAYER], -1
-      MOV [INC_ROW_PLAYER], 0
 
       CALL MOVE_PLAYER
 
       JMP END_KEY
 
   UP_KEY:
-			; Shoot bullet
-      MOV [INC_COL_BULLET], 0
+			; Check if already fired
+			CMP [BULLET_FIRED], TRUE
+      JZ 	END_KEY
+
+			; Set bullet movement
       MOV [INC_ROW_BULLET], -1
 
-			; spawn bullet
+			; Set spawn position
+			MOV AH, [POS_COL_PLAYER]
+			MOV AL, [POS_ROW_PLAYER-1]
+
+			; Spawn bullet
+			MOV [POS_COL_BULLET], AH
+      MOV [POS_ROW_BULLET], AL
+
+			MOV [BULLET_FIRED], TRUE
 			CALL MOVE_BULLET
 
       JMP END_KEY
@@ -189,8 +192,9 @@ INIT_GAME		PROC		NEAR
     MOV [INC_ROW_SNAKE_HEAD], 0
     MOV [INC_COL_SNAKE_HEAD], 0
 
-		MOV [INC_ROW_PLAYER], 0
     MOV [INC_COL_PLAYER], 0
+
+		MOV [INC_ROW_BULLET], 0
 
     MOV [DIV_SPEED], 10
 
@@ -510,7 +514,6 @@ MOVE_PLAYER		PROC		NEAR
 
 		; Load player coordinates
 		ADD DL, [INC_COL_PLAYER]
-		ADD DH, [INC_ROW_PLAYER]
 
 		; Move player on the screen
 		CALL MOVE_CURSOR
@@ -575,11 +578,13 @@ PRINT_BULLET        ENDP
 ;   NUM_TILES
 ;		DL
 ;		HL
+;		BULLET_FIRED
 ; Uses:
 ;   INC_COL
 ;		INC_ROW
 ;		ATTR_PLAYER
 ;		NUM_TILES
+;		BULLET_FIRED
 ; Calls:
 ;   MOVE_CURSOR
 ;		READ_SCREEN_CHAR
@@ -592,6 +597,7 @@ MOVE_BULLET		PROC		NEAR
 		PUSH DX
 
 		MOV DH, [POS_ROW_BULLET]
+		MOV DL, [POS_COL_BULLET]
 
 		; Increment the bullet's row
 		ADD DH, [INC_ROW_BULLET]
@@ -599,18 +605,23 @@ MOVE_BULLET		PROC		NEAR
 		; Move bullet on the screen
 		CALL MOVE_CURSOR
 
-		; Check if bullet collided with the field or with itself
+		; Check if bullet collided with the field or with the snake
 		CALL READ_SCREEN_CHAR
-		CMP AH, ATTR_BULLET
+		CMP AH, ATTR_FIELD
+		JZ END_BULLET
+		CMP AH, ATTR_SNAKE
 		JZ END_BULLET
 
 		MOV [POS_ROW_BULLET], DH
+		MOV [POS_COL_BULLET], DL
 
 		POP DX
 		POP AX
 		RET
 
 	END_BULLET:
+		MOV [BULLET_FIRED], FALSE
+
 		POP DX
 		POP AX
     RET
@@ -1106,14 +1117,15 @@ NEW_TIMER_INTERRUPT		PROC		NEAR
     CMP [START_GAME], TRUE
     JNZ END_ISR
 
-		MOV DH, POS_COL_BULLET
-		MOV DL, POS_ROW_BULLET-1
+		CMP [BULLET_FIRED], TRUE
+		JNZ	SNAKE
 
 		CALL MOVE_BULLET
 
+	SNAKE:
 		CALL MOVE_SNAKE
 
-    ; Increment INC_COUNT and check if worm position must be updated (INT_COUNT == DIV_COUNT)
+    ; Increment INC_COUNT and check if snake position must be updated (INT_COUNT == DIV_COUNT)
     INC [INT_COUNT]
     MOV AL, [INT_COUNT]
     CMP [DIV_SPEED], AL
@@ -1229,26 +1241,30 @@ DATA_SEG	SEGMENT	PUBLIC
     ; (INC_ROW. INC_COL) may be (-1, 0, 1), and determine the direction of movement of the snake's head
     INC_ROW_SNAKE_HEAD DB 0
     INC_COL_SNAKE_HEAD DB 0
+		; Position of the snake's head
 		POS_ROW_SNAKE_HEAD DB 2
 		POS_COL_SNAKE_HEAD DB SCREEN_MAX_COLS/2
 
 		; (INC_ROW. INC_COL) may be (-1, 0, 1), and determine the direction of movement of the snake's tail
     INC_ROW_SNAKE_TAIL DB 0
     INC_COL_SNAKE_TAIL DB 0
+		; Position of the snake's tail
 		POS_ROW_SNAKE_TAIL DB 2
 		POS_COL_SNAKE_TAIL DB 2
 
-		; (INC_ROW. INC_COL) may be (-1, 0, 1), and determine the direction of movement of the player
-		INC_ROW_PLAYER DB 0
+		; (INC_COL_PLAYER) may be (-1, 0, 1), and determine the direction of movement of the player
     INC_COL_PLAYER DB 0
+		; Position of the player
 		POS_ROW_PLAYER DB SCREEN_MAX_ROWS/2
 		POS_COL_PLAYER DB SCREEN_MAX_ROWS-2
 
-		; (INC_ROW. INC_COL) may be (-1, 0, 1), and determine the direction of movement of the bullet
+		; (INC_ROW_BULLET) may be (-1, 0, 1), and determine the direction of movement of the bullet
 		INC_ROW_BULLET DB 0
-    INC_COL_BULLET DB 0
+		; Position of the bullet
 		POS_ROW_BULLET DB 0
 		POS_COL_BULLET DB 0
+		; Set BULLET_FIRED to 1 when shooting and 0 when there is no bullet on screen
+		BULLET_FIRED	 DB 0
 
     NUM_TILES DW 0              ; SNAKE LENGTH
     NUM_TILES_INC_SPEED DB 20   ; THE SPEED IS INCREASED EVERY 'NUM_TILES_INC_SPEED'
