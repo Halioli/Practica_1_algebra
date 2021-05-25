@@ -17,10 +17,9 @@ class FPCamera {
     translate(cameraLocation.x, cameraLocation.y, cameraLocation.z);
 
     // Side to side movement
-    rotateY(-mouseX*0.01);
+    rotateY(-mouseX*0.005);
 
     translate(0, 0, -200);
-    //ball(0, 0, 0, 20);
 
     float x = modelX(0, 0, 0);
     float y = modelY(0, 0, 0);
@@ -52,7 +51,6 @@ class FPCamera {
         velocity.limit(topSpeed);
         // Location changes by velocity
         cameraLocation.add(velocity);
-        
       } else if (key == 's' || key == 'S') {
         // Compute a vector that points from location to mouse.
         //PVector targetPosition = new PVector(x, y, z);
@@ -67,8 +65,7 @@ class FPCamera {
         velocity.limit(topSpeed);
         // Location changes by velocity
         cameraLocation.add(velocity);
-        
-      } 
+      }
     }
   }
 }
