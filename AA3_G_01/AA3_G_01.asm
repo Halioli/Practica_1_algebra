@@ -136,7 +136,8 @@ MAIN 	PROC 	NEAR
 
 			; Set spawn position
 			MOV AH, [POS_COL_PLAYER]
-			MOV AL, [POS_ROW_PLAYER-1]
+			MOV AL, [POS_ROW_PLAYER]
+			ADD AL, -1
 
 			; Spawn bullet
 			MOV [POS_COL_BULLET], AH
@@ -402,14 +403,14 @@ MOVE_SNAKE		PROC		NEAR
 		CMP AH, ATTR_FIELD
 		JNZ MOVE_TAIL
 
-		MOV [INC_COL_SNAKE_HEAD], 0
-		MOV [INC_ROW_SNAKE_HEAD], 1
+		MOV [POS_COL_SNAKE_HEAD], 01h		; Set to starting column
+		ADD [POS_ROW_SNAKE_HEAD], 01h		; Move to the next row
 
-		;POP DX
+		;MOV [INC_COL_SNAKE_HEAD], 0
+		;MOV [INC_ROW_SNAKE_HEAD], 1
 
 	MOVE_TAIL:
 		CALL PRINT_SNAKE
-		;PUSH DX
 
 		MOV DL, [POS_COL_SNAKE_TAIL]
 		MOV DH, [POS_ROW_SNAKE_TAIL]
@@ -439,8 +440,8 @@ MOVE_SNAKE		PROC		NEAR
 		RET
 
 	NEXT_ROW_TAIL:
-		MOV [INC_COL_SNAKE_TAIL], 0
-		MOV [INC_ROW_SNAKE_TAIL], 1
+		MOV [POS_COL_SNAKE_TAIL], 01h		; Set to starting column
+		ADD [POS_ROW_SNAKE_TAIL], 01h		; Move to the next row
 
 		POP DX
 		POP AX
@@ -1255,13 +1256,13 @@ DATA_SEG	SEGMENT	PUBLIC
     INC_COL_SNAKE_TAIL DB 1
 		; Position of the snake's tail
 		POS_ROW_SNAKE_TAIL DB 2
-		POS_COL_SNAKE_TAIL DB 2
+		POS_COL_SNAKE_TAIL DB 1
 
 		; (INC_COL_PLAYER) may be (-1, 0, 1), and determine the direction of movement of the player
     INC_COL_PLAYER DB 0
 		; Position of the player
-		POS_ROW_PLAYER DB SCREEN_MAX_ROWS/2
-		POS_COL_PLAYER DB SCREEN_MAX_ROWS-2
+		POS_ROW_PLAYER DB SCREEN_MAX_ROWS-3
+		POS_COL_PLAYER DB SCREEN_MAX_ROWS/2
 
 		; (INC_ROW_BULLET) may be (-1, 0, 1), and determine the direction of movement of the bullet
 		INC_ROW_BULLET DB 0
