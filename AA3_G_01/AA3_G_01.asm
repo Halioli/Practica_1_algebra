@@ -406,9 +406,6 @@ MOVE_SNAKE		PROC		NEAR
 		MOV [POS_COL_SNAKE_HEAD], 01h		; Set to starting column
 		ADD [POS_ROW_SNAKE_HEAD], 01h		; Move to the next row
 
-		;MOV [INC_COL_SNAKE_HEAD], 0
-		;MOV [INC_ROW_SNAKE_HEAD], 1
-
 	MOVE_TAIL:
 		CALL PRINT_SNAKE
 
@@ -522,8 +519,8 @@ MOVE_PLAYER		PROC		NEAR
 
 		; Check if player collided with the field or with itself
 		CALL READ_SCREEN_CHAR
-		CMP AH, ATTR_PLAYER
-		JZ END_PLAYER
+		CMP AH, ATTR_FIELD
+		JZ PLAYER_HIT_CORNER
 
 		CALL PRINT_PLAYER
 
@@ -534,11 +531,12 @@ MOVE_PLAYER		PROC		NEAR
 		POP AX
 		RET
 
-	END_PLAYER:
+	PLAYER_HIT_CORNER:
+		MOV DL, 00h
+		MOV [INC_COL_PLAYER], DL
+
 		POP DX
 		POP AX
-	  MOV [END_GAME], TRUE
-
     RET
 
 MOVE_PLAYER	ENDP
@@ -614,7 +612,7 @@ MOVE_BULLET		PROC		NEAR
 		CMP AH, ATTR_FIELD
 		JZ END_BULLET
 		CMP AH, ATTR_SNAKE
-		JZ END_BULLET
+		JZ END_BULLET_HIT
 
 		CALL PRINT_BULLET
 
@@ -625,6 +623,16 @@ MOVE_BULLET		PROC		NEAR
 		POP AX
 		RET
 
+	END_BULLET_HIT:
+		MOV [BULLET_FIRED], FALSE
+		ADD [CURR_LENGHT_SNAKE], -1
+		POP DX
+		POP AX
+
+		CALL CHECK_SNAKE_LENGHT
+
+		RET
+
 	END_BULLET:
 		MOV [BULLET_FIRED], FALSE
 
@@ -633,6 +641,36 @@ MOVE_BULLET		PROC		NEAR
     RET
 
 MOVE_BULLET	ENDP
+
+; ****************************************
+; Check if the snake still has length
+; Entry:
+;   -
+; Returns:
+;		-
+; Modifies:
+;		-
+; Uses:
+;		CURR_LENGHT_SNAKE
+;		END_GAME
+; Calls:
+;   -
+; ****************************************
+
+					PUBLIC CHECK_SNAKE_LENGHT
+CHECK_SNAKE_LENGHT		PROC		NEAR
+
+		MOV AH, 00h
+		CMP AH, [CURR_LENGHT_SNAKE]
+		JE WIN_GAME
+
+		RET
+
+	WIN_GAME:
+		MOV [END_GAME], TRUE
+		RET
+
+CHECK_SNAKE_LENGHT        ENDP
 
 ; ****************************************
 ; Prints character and attribute in the
@@ -1249,7 +1287,7 @@ DATA_SEG	SEGMENT	PUBLIC
     INC_COL_SNAKE_HEAD DB 1
 		; Position of the snake's head
 		POS_ROW_SNAKE_HEAD DB 2
-		POS_COL_SNAKE_HEAD DB SCREEN_MAX_COLS/2
+		POS_COL_SNAKE_HEAD DB MAX_LENGHT_SNAKE
 
 		; (INC_ROW. INC_COL) may be (-1, 0, 1), and determine the direction of movement of the snake's tail
     INC_ROW_SNAKE_TAIL DB 0
@@ -1257,6 +1295,8 @@ DATA_SEG	SEGMENT	PUBLIC
 		; Position of the snake's tail
 		POS_ROW_SNAKE_TAIL DB 2
 		POS_COL_SNAKE_TAIL DB 1
+
+		CURR_LENGHT_SNAKE	 DB MAX_LENGHT_SNAKE
 
 		; (INC_COL_PLAYER) may be (-1, 0, 1), and determine the direction of movement of the player
     INC_COL_PLAYER DB 0
