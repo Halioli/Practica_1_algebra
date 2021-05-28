@@ -17,6 +17,10 @@ SGROUP 		GROUP 	CODE_SEG, DATA_SEG
     ASCII_UP          EQU 048h
     ASCII_QUIT        EQU 071h ; 'q'
 
+;	ASCII / ATTR CODES TO DRAW BLANK
+		ASCII_BLANK     	EQU 00h
+		ATTR_BLANK      	EQU 00h
+
 ; ASCII / ATTR CODES TO DRAW THE SNAKE
     ASCII_SNAKE     	EQU 02Ah
     ATTR_SNAKE      	EQU 00Ah
@@ -327,6 +331,35 @@ DRAW_FIELD		PROC		NEAR
 DRAW_FIELD       ENDP
 
 ; ****************************************
+; Prints an empty tile
+; Entry:
+;		-
+; Returns:
+;		-
+; Modifies:
+;		-
+; Uses:
+;   ASCII_BLANK
+;   ATTR_BLANK
+; Calls:
+;   PRINT_CHAR_ATTR
+; ****************************************
+					PUBLIC PRINT_BLANK
+PRINT_BLANK		PROC		NEAR
+
+    PUSH AX
+    PUSH BX
+    MOV AL, ASCII_BLANK
+    MOV BL, ATTR_BLANK
+    CALL PRINT_CHAR_ATTR
+
+    POP BX
+    POP AX
+    RET
+
+PRINT_BLANK        ENDP
+
+; ****************************************
 ; Prints a new tile of the snake, at the current cursos position
 ; Entry:
 ;		-
@@ -356,7 +389,7 @@ PRINT_SNAKE		PROC		NEAR
 PRINT_SNAKE        ENDP
 
 ; ****************************************
-; Moves the snake based on input
+; Moves the snake's head
 ; Entry:
 ;		-
 ; Returns:
@@ -375,23 +408,24 @@ PRINT_SNAKE        ENDP
 ;		READ_SCREEN_CHAR
 ;		PRINT_SNAKE
 ; ****************************************
-					PUBLIC  MOVE_SNAKE
-MOVE_SNAKE		PROC		NEAR
+					PUBLIC  MOVE_SNAKE_HEAD
+MOVE_SNAKE_HEAD		PROC		NEAR
 
 		PUSH AX
 		PUSH DX
 
+		; Load snake coordinates
 		MOV DL, [POS_COL_SNAKE_HEAD]
 		MOV DH, [POS_ROW_SNAKE_HEAD]
 
-		; Load snake coordinates
+		; Increment snake coordinates
 		ADD DL, [INC_COL_SNAKE_HEAD]
 		ADD DH, [INC_ROW_SNAKE_HEAD]
 
 		; Move snake on the screen
 		CALL MOVE_CURSOR
 
-		; Check if snake collided with the player or field
+		; Check if snake collided with the player
 		CALL READ_SCREEN_CHAR
 		CMP AH, ATTR_PLAYER
 		JZ END_SNAKE
@@ -400,17 +434,61 @@ MOVE_SNAKE		PROC		NEAR
 		MOV [POS_COL_SNAKE_HEAD], DL
 		MOV [POS_ROW_SNAKE_HEAD], DH
 
+		; Check if snake collided with the field
 		CMP AH, ATTR_FIELD
-		JNZ MOVE_TAIL
+		JNZ EXIT
 
-		MOV [POS_COL_SNAKE_HEAD], 01h		; Set to starting column
+		MOV [POS_COL_SNAKE_HEAD], 02h		; Set to starting column
 		ADD [POS_ROW_SNAKE_HEAD], 01h		; Move to the next row
 
-	MOVE_TAIL:
+	EXIT:
 		CALL PRINT_SNAKE
+
+		POP DX
+		POP AX
+		RET
+
+	END_SNAKE:
+		POP DX
+		POP AX
+	  MOV [END_GAME], TRUE
+
+    RET
+
+MOVE_SNAKE_HEAD	ENDP
+
+; ****************************************
+; Moves the snake's tail
+; Entry:
+;		-
+; Returns:
+;   -
+; Modifies:
+;   NUM_TILES
+;		DL
+;		HL
+; Uses:
+;   INC_COL
+;		INC_ROW
+;		ATTR_SNAKE
+;		NUM_TILES
+; Calls:
+;   MOVE_CURSOR
+;		READ_SCREEN_CHAR
+;		PRINT_SNAKE
+; ****************************************
+					PUBLIC  MOVE_SNAKE_TAIL
+MOVE_SNAKE_TAIL		PROC		NEAR
+
+		PUSH AX
+		PUSH DX
 
 		MOV DL, [POS_COL_SNAKE_TAIL]
 		MOV DH, [POS_ROW_SNAKE_TAIL]
+
+		; Clear previous position
+		CALL MOVE_CURSOR
+		CALL PRINT_BLANK
 
 		; Load snake's tail coordinates
 		ADD DL, [INC_COL_SNAKE_TAIL]
@@ -437,7 +515,7 @@ MOVE_SNAKE		PROC		NEAR
 		RET
 
 	NEXT_ROW_TAIL:
-		MOV [POS_COL_SNAKE_TAIL], 01h		; Set to starting column
+		MOV [POS_COL_SNAKE_TAIL], 02h		; Set to starting column
 		ADD [POS_ROW_SNAKE_TAIL], 01h		; Move to the next row
 
 		POP DX
@@ -451,7 +529,7 @@ MOVE_SNAKE		PROC		NEAR
 
     RET
 
-MOVE_SNAKE	ENDP
+MOVE_SNAKE_TAIL	ENDP
 
 ; ****************************************
 ; Prints the player
@@ -510,6 +588,10 @@ MOVE_PLAYER		PROC		NEAR
 
 		MOV DL, [POS_COL_PLAYER]
 		MOV DH, [POS_ROW_PLAYER]
+
+		; Clear previous position
+		CALL MOVE_CURSOR
+		CALL PRINT_BLANK
 
 		; Load player coordinates
 		ADD DL, [INC_COL_PLAYER]
@@ -601,6 +683,10 @@ MOVE_BULLET		PROC		NEAR
 		MOV DH, [POS_ROW_BULLET]
 		MOV DL, [POS_COL_BULLET]
 
+		; Clear previous position
+		CALL MOVE_CURSOR
+		CALL PRINT_BLANK
+
 		; Increment the bullet's row
 		ADD DH, [INC_ROW_BULLET]
 
@@ -629,6 +715,7 @@ MOVE_BULLET		PROC		NEAR
 		POP DX
 		POP AX
 
+		CALL MOVE_SNAKE_TAIL
 		CALL CHECK_SNAKE_LENGHT
 
 		RET
@@ -1167,7 +1254,8 @@ NEW_TIMER_INTERRUPT		PROC		NEAR
 		CALL MOVE_BULLET
 
 	SNAKE:
-		CALL MOVE_SNAKE
+		CALL MOVE_SNAKE_HEAD
+		CALL MOVE_SNAKE_TAIL
 
     ; Increment INC_COUNT and check if snake position must be updated (INT_COUNT == DIV_COUNT)
     INC [INT_COUNT]
@@ -1294,7 +1382,7 @@ DATA_SEG	SEGMENT	PUBLIC
     INC_COL_SNAKE_TAIL DB 1
 		; Position of the snake's tail
 		POS_ROW_SNAKE_TAIL DB 2
-		POS_COL_SNAKE_TAIL DB 1
+		POS_COL_SNAKE_TAIL DB 2
 
 		CURR_LENGHT_SNAKE	 DB MAX_LENGHT_SNAKE
 
