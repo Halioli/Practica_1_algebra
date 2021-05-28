@@ -434,15 +434,19 @@ MOVE_SNAKE_HEAD		PROC		NEAR
 		MOV [POS_COL_SNAKE_HEAD], DL
 		MOV [POS_ROW_SNAKE_HEAD], DH
 
+		CALL PRINT_SNAKE
+
 		; Check if snake collided with the field
 		CMP AH, ATTR_FIELD
-		JNZ EXIT
+		JZ NEXT_ROW_HEAD
 
+		POP DX
+		POP AX
+		RET
+
+	NEXT_ROW_HEAD:
 		MOV [POS_COL_SNAKE_HEAD], 02h		; Set to starting column
 		ADD [POS_ROW_SNAKE_HEAD], 01h		; Move to the next row
-
-	EXIT:
-		CALL PRINT_SNAKE
 
 		POP DX
 		POP AX
