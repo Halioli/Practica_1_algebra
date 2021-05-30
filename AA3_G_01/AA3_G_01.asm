@@ -1379,7 +1379,7 @@ DATA_SEG	SEGMENT	PUBLIC
     INC_COL_SNAKE_HEAD DB 1
 		; Position of the snake's head
 		POS_ROW_SNAKE_HEAD DB 2
-		POS_COL_SNAKE_HEAD DB MAX_LENGHT_SNAKE
+		POS_COL_SNAKE_HEAD DB 0Ah
 
 		; (INC_ROW. INC_COL) may be (-1, 0, 1), and determine the direction of movement of the snake's tail
     INC_ROW_SNAKE_TAIL DB 0
@@ -1388,7 +1388,7 @@ DATA_SEG	SEGMENT	PUBLIC
 		POS_ROW_SNAKE_TAIL DB 2
 		POS_COL_SNAKE_TAIL DB 2
 
-		CURR_LENGHT_SNAKE	 DB MAX_LENGHT_SNAKE
+		CURR_LENGHT_SNAKE	 DB 0Ah
 
 		; (INC_COL_PLAYER) may be (-1, 0, 1), and determine the direction of movement of the player
     INC_COL_PLAYER DB 0
