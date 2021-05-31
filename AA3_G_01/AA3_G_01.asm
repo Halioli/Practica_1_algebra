@@ -1,4 +1,4 @@
-; * Aniol Barnada, 2021 (ENTI-UB)
+; * Aniol Barnada, Marc Vicente, 2021 (ENTI-UB)
 
 ; *************************************************************************
 ; Our data section. Here we declare our strings for our console message
@@ -182,24 +182,54 @@ MAIN	ENDP
 ; Modifies:
 ;   -
 ; Uses:
-;   INC_ROW memory variable
-;   INC_COL memory variable
-;   DIV_SPEED memory variable
-;   NUM_TILES memory variable
-;   START_GAME memory variable
-;   END_GAME memory variable
+;   INC_ROW_SNAKE_HEAD
+;   INC_COL_SNAKE_HEAD
+;   POS_ROW_SNAKE_HEAD
+;   POS_COL_SNAKE_HEAD
+;   INC_ROW_SNAKE_TAIL
+;   INC_COL_SNAKE_TAIL
+;   CURR_LENGHT_SNAKE
+;		INC_COL_PLAYER
+;		POS_ROW_PLAYER
+;		POS_COL_PLAYER
+;		INC_ROW_BULLET
+;		BULLET_FIRED
+;		DIV_SPEED
+;		NUM_TILES
+;		START_GAME
+;		END_GAME
 ; Calls:
 ;   -
 ; ****************************************
 					PUBLIC  INIT_GAME
 INIT_GAME		PROC		NEAR
 
-    MOV [INC_ROW_SNAKE_HEAD], 0
-    MOV [INC_COL_SNAKE_HEAD], 0
+		; Direction of movement of the snake's head
+		MOV [INC_ROW_SNAKE_HEAD], 00h
+		MOV [INC_COL_SNAKE_HEAD], 01h
+		; Position of the snake's head
+		MOV [POS_ROW_SNAKE_HEAD], 02h
+		MOV [POS_COL_SNAKE_HEAD], 0Ah
 
+		; Direction of movement of the snake's tail
+		MOV [INC_ROW_SNAKE_TAIL], 00h
+		MOV [INC_COL_SNAKE_TAIL], 01h
+		; Position of the snake's tail
+		MOV [POS_ROW_SNAKE_TAIL], 02h
+		MOV [POS_COL_SNAKE_TAIL], 02h
+
+		; Snake's lenght
+		MOV [CURR_LENGHT_SNAKE], 0Ah
+
+		; Direction of movement of the player
     MOV [INC_COL_PLAYER], 0
+		; Position of the player
+		MOV [POS_ROW_PLAYER], SCREEN_MAX_ROWS-3
+		MOV [POS_COL_PLAYER], SCREEN_MAX_COLS/2
 
+		; Direction of movement of the bullet
 		MOV [INC_ROW_BULLET], 0
+		MOV [BULLET_FIRED], FALSE
 
     MOV [DIV_SPEED], 10
 
@@ -396,13 +426,15 @@ PRINT_SNAKE        ENDP
 ;   -
 ; Modifies:
 ;   NUM_TILES
-;		DL
+;		END_GAME
 ;		HL
 ; Uses:
-;   INC_COL
-;		INC_ROW
-;		ATTR_SNAKE
-;		NUM_TILES
+;   POS_COL_SNAKE_HEAD
+;		POS_ROW_SNAKE_HEAD
+;		INC_COL_SNAKE_HEAD
+;		INC_ROW_SNAKE_HEAD
+;		ATTR_PLAYER
+;		ATTR_FIELD
 ; Calls:
 ;   MOVE_CURSOR
 ;		READ_SCREEN_CHAR
@@ -430,15 +462,15 @@ MOVE_SNAKE_HEAD		PROC		NEAR
 		CMP AH, ATTR_PLAYER
 		JZ END_SNAKE
 
+		; Check if snake collided with the field
+		CMP AH, ATTR_FIELD
+		JZ NEXT_ROW_HEAD
+
 		; Set snake's head position
 		MOV [POS_COL_SNAKE_HEAD], DL
 		MOV [POS_ROW_SNAKE_HEAD], DH
 
 		CALL PRINT_SNAKE
-
-		; Check if snake collided with the field
-		CMP AH, ATTR_FIELD
-		JZ NEXT_ROW_HEAD
 
 		POP DX
 		POP AX
@@ -469,16 +501,17 @@ MOVE_SNAKE_HEAD	ENDP
 ;   -
 ; Modifies:
 ;   NUM_TILES
-;		DL
 ;		HL
 ; Uses:
-;   INC_COL
-;		INC_ROW
-;		ATTR_SNAKE
-;		NUM_TILES
+;   POS_COL_SNAKE_TAIL
+;		POS_ROW_SNAKE_TAIL
+;		INC_COL_SNAKE_TAIL
+;		INC_ROW_SNAKE_TAIL
+;		ATTR_FIELD
 ; Calls:
 ;   MOVE_CURSOR
 ;		READ_SCREEN_CHAR
+;		PRINT_BLANK
 ;		PRINT_SNAKE
 ; ****************************************
 					PUBLIC  MOVE_SNAKE_TAIL
@@ -510,8 +543,7 @@ MOVE_SNAKE_TAIL		PROC		NEAR
 		MOV [POS_COL_SNAKE_TAIL], DL
 		MOV [POS_ROW_SNAKE_TAIL], DH
 
-		; Increment the length of the snake
-		INC [NUM_TILES]
+		; Draw the snake's tail
 		CALL PRINT_SNAKE
 
 		POP DX
@@ -525,13 +557,6 @@ MOVE_SNAKE_TAIL		PROC		NEAR
 		POP DX
 		POP AX
 		RET
-
-	END_SNAKE:
-		POP DX
-		POP AX
-	  MOV [END_GAME], TRUE
-
-    RET
 
 MOVE_SNAKE_TAIL	ENDP
 
@@ -571,18 +596,16 @@ PRINT_PLAYER        ENDP
 ; Returns:
 ;   -
 ; Modifies:
-;   NUM_TILES
-;		DL
 ;		HL
 ; Uses:
-;   INC_COL
-;		INC_ROW
-;		ATTR_PLAYER
+;   POS_COL_PLAYER
+;		POS_ROW_PLAYER
+;		INC_COL_PLAYER
 ;		NUM_TILES
 ; Calls:
 ;   MOVE_CURSOR
 ;		READ_SCREEN_CHAR
-;		PRINT_SNAKE
+;		PRINT_BLANK
 ; ****************************************
 					PUBLIC  MOVE_PLAYER
 MOVE_PLAYER		PROC		NEAR
@@ -663,20 +686,18 @@ PRINT_BULLET        ENDP
 ; Returns:
 ;   -
 ; Modifies:
-;   NUM_TILES
-;		DL
-;		HL
 ;		BULLET_FIRED
 ; Uses:
-;   INC_COL
-;		INC_ROW
-;		ATTR_PLAYER
-;		NUM_TILES
+;   POS_ROW_BULLET
+;		POS_COL_BULLET
+;		ATTR_FIELD
+;		ATTR_SNAKE
 ;		BULLET_FIRED
 ; Calls:
 ;   MOVE_CURSOR
+;		PRINT_BLANK
 ;		READ_SCREEN_CHAR
-;		PRINT_SNAKE
+;		PRINT_BULLET
 ; ****************************************
 					PUBLIC  MOVE_BULLET
 MOVE_BULLET		PROC		NEAR
@@ -1228,16 +1249,15 @@ PRINT_SCORE        ENDP
 ;   END_GAME memory variable
 ;   INT_COUNT memory variable
 ;   DIV_SPEED memory variable
-;   INC_COL memory variable
-;   INC_ROW memory variable
-;   ATTR_SNAKE constant
 ;   NUM_TILES memory variable
 ;   NUM_TILES_INC_SPEED
+;		BULLET_FIRED
 ; Calls:
 ;   MOVE_CURSOR
 ;   READ_SCREEN_CHAR
-;   PRINT_SNAKE
-;		MOVE_SNAKE
+;		MOVE_BULLET
+;		MOVE_SNAKE_HEAD
+;		MOVE_SNAKE_TAIL
 ; ****************************************
 					PUBLIC NEW_TIMER_INTERRUPT
 NEW_TIMER_INTERRUPT		PROC		NEAR
@@ -1394,7 +1414,7 @@ DATA_SEG	SEGMENT	PUBLIC
     INC_COL_PLAYER DB 0
 		; Position of the player
 		POS_ROW_PLAYER DB SCREEN_MAX_ROWS-3
-		POS_COL_PLAYER DB SCREEN_MAX_ROWS/2
+		POS_COL_PLAYER DB SCREEN_MAX_COLS/2
 
 		; (INC_ROW_BULLET) may be (-1, 0, 1), and determine the direction of movement of the bullet
 		INC_ROW_BULLET DB 0
@@ -1405,7 +1425,7 @@ DATA_SEG	SEGMENT	PUBLIC
 		BULLET_FIRED	 DB 0
 
     NUM_TILES DW 0              ; SNAKE LENGTH
-    NUM_TILES_INC_SPEED DB 20   ; THE SPEED IS INCREASED EVERY 'NUM_TILES_INC_SPEED'
+    NUM_TILES_INC_SPEED DB 10   ; THE SPEED IS INCREASED EVERY 'NUM_TILES_INC_SPEED'
 
     DIV_SPEED DB 10             ; THE SNAKE SPEED IS THE (INTERRUPT FREQUENCY) / DIV_SPEED
     INT_COUNT DB 0              ; 'INT_COUNT' IS INCREASED EVERY INTERRUPT CALL, AND RESET WHEN IT ACHIEVES 'DIV_SPEED'
