@@ -5,11 +5,13 @@ class FPCamera {
   PVector velocity;
   PVector acceleration;
   float topSpeed;
-
+  float cameraRadius;
+  
   FPCamera() {
     cameraLocation = new PVector(width/2-400, height/2+50, (height/2) / tan(PI*30 / 180)-150);
     velocity = new PVector(0, 0);
     topSpeed = 7;
+    cameraRadius = 40;
   }
 
   void camTransformations() {

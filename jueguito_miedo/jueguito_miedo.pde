@@ -3,29 +3,37 @@
 // VARIABLES
 // Camera
 FPCamera camera;
-
-PImage oscarImage;
-PShape oscarShape;
+//Enemy
+EnemyOscar oscar;
+//Collectables
+Collectable[] collectables = new Collectable[7];
 
 // FUNCTIONS
 void setup() {
   size(1200, 800, P3D); 
   // Instantiate camera
   camera = new FPCamera();
+  oscar = new EnemyOscar();
 
   // Load image
   setupGround(9, 10); 
   setupWalls(40); 
+  oscar.setupOscar();
 
-  oscarImage = loadImage("OscarCaco_Head.png");
-  oscarShape = createShape(BOX,200);
-  
-  oscarShape.setTexture(oscarImage);
+  for (int i=0; i < collectables.length; i++) {
+    collectables[i] = new Collectable(i);
+  }
 
+  for (int i = 0; i < collectables.length; i++) {
+    collectables[i].setupCollectables(i);
+  }
   noStroke();
 
   //Set cursor invisible
   noCursor();
+
+  //Set frameRate value
+  frameRate(60);
 }
 
 void draw() {
@@ -33,11 +41,13 @@ void draw() {
   background(0);
   camera.camTransformations();
 
-  pushMatrix();
-  translate(0,450,0);
-  shape(oscarShape);
-  popMatrix();
- 
+  oscar.drawOscar();
+
+  for (int i = 0; i < collectables.length; i++) {
+    collectables[i].updateColl();
+    collectables[i].drawCollectables(i);
+  }
+
   // Draw the environment
   //  - (Ground)
   drawGround(9, 10, 0, 0, 0, 400, -600);
