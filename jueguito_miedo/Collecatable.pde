@@ -11,7 +11,7 @@ class Collectable {
 
   Collectable(int collectable) {
     collectablePosition[collectable] = new PVector(0.0, 450.0, 0.0);
-    rotationSpeed = 3.0;
+    rotationSpeed = 1.0;
   }
 
   void setupCollectables(int i) { 
