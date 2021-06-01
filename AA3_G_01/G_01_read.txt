@@ -1,0 +1,11 @@
+CONTROLS:
+Fletxa avall 	--> Inicialitzar el joc (timer)
+Fletxa dreta 	--> Moure el jugador cap a la dreta
+Fletxa esquerra --> Moure el jugador cap a l'esquerra
+Fletxa amunt 	--> Disparar
+'q'		--> Quit
+
+INSTRUCCIONS MÍNIMES:
+L'objectiu del jugador és evitar que l'snake arribi a ell.
+Aquest ho pot fer disparant-li.
+Cada cop que una bala impacta amb la serp es fa més petita.
