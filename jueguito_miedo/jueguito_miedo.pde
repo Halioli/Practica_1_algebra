@@ -3,8 +3,13 @@
 // VARIABLES
 // Camera
 FPCamera camera;
+
 //Enemy
 EnemyOscar oscar;
+
+// Bezier's Curve
+BezierCurve bezierCurve;
+
 //Collectables
 Collectable[] collectables = new Collectable[5];
 Wall[] wallsVertical = new Wall[100];

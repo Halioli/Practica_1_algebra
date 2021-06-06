@@ -9,7 +9,7 @@ class Collectable {
   float rotationSpeed;
   float yAngle;
 
-  // Effect
+  // Effect (Parametric Interpolation Curve)
   int numPoints = 4;
   PVector[] controlPoints;
   PVector[] coefficient;
@@ -51,8 +51,8 @@ class Collectable {
     for (int i = 0; i < numPoints; i++) {
 
       // Initialize
-      controlPoints[i] = new PVector(0.0, 0.0);
-      coefficient[i] = new PVector(0.0, 0.0);
+      controlPoints[i] = new PVector(0.0, 0.0, 0.0);
+      coefficient[i] = new PVector(0.0, 0.0, 0.0);
 
       controlPoints[i] = points[i];
     }
@@ -126,7 +126,6 @@ class Collectable {
     stroke(effectColor);
 
     for (float u = 0.0; u < 1.0; u += 0.01) {
-      // p(u) = C0 + C1 * u + C2 * u2 + C3 * u3
       // x(u) = C0x + C1x * u + C2x * u2 + C3x * u3
       x = coefficient[0].x + coefficient[1].x * u
         + coefficient[2].x * u * u
@@ -137,11 +136,12 @@ class Collectable {
         + coefficient[2].y * u * u
         + coefficient[3].y * u * u * u;
 
+      // z(u) = C0z + C1z * u + C2z * u2 + C3z * u3
       z = coefficient[0].z + coefficient[1].z * u
         + coefficient[2].z * u * u
         + coefficient[3].z * u * u * u;
 
-      // Pintamos el punto
+      // Draw the point
       point(x, y, z);
     }
   }
