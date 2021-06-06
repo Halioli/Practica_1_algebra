@@ -1,13 +1,13 @@
 void drawEnvironment(){
   
   //  - (Ground)
-  drawGround(30, 30, 0, 400, -600);
-  drawGround(30, 30, 0, 400, -300);
+  //drawGround(30, 30, 0, 400, -600);
+  //drawGround(30, 30, 0, 400, -300);
   
 // - Walls
-  for (int i = 0; i < 1; i++) {
-    wallsHorizontal[i].drawWallHorizontal(50, 450, 400, i);
-  }
+  //for (int i = 0; i < 1; i++) {
+  //  wallsHorizontal[i].drawWallHorizontal(50, 450, 400, i);
+  //}
 
   for (int i = currentWall; i < currentWall + 5; i++) {
     wallsVertical[i].drawWallVertical(0, 450, 650, i);

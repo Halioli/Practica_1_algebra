@@ -1,10 +1,10 @@
 class Collectable {
-  int numCollectables = 7;
+  int numCollectables = 5;
 
-  PImage collectableImage[] = new PImage[7];
-  PShape collectableShape[] = new PShape[7];
+  PImage collectableImage[] = new PImage[5];
+  PShape collectableShape[] = new PShape[5];
 
-  PVector collectablePosition[] = new PVector[7];
+  PVector collectablePosition = new PVector(0.0, 0.0, 0.0);
 
   float rotationSpeed;
   float yAngle;
@@ -16,8 +16,8 @@ class Collectable {
   color effectColor;
   PVector points[] = new PVector[numPoints];
 
-  Collectable (int collectable) {
-    collectablePosition[collectable] = new PVector(0.0, 450.0, 0.0);
+  Collectable (float x, float z) {
+    collectablePosition = new PVector(x, 450.0, z);
     rotationSpeed = 1.0;
   }
 
@@ -27,24 +27,24 @@ class Collectable {
     collectableShape[i].setTexture(collectableImage[i]);
   }
 
-  void updateColl() {
+  void updateCollect() {
     yAngle += rotationSpeed;
   }
 
   void drawCollectables (int coll) {
     pushMatrix();
-    translate(0.0 + (100 * coll), 450, 0.0);
+    translate(collectablePosition.x, collectablePosition.y, collectablePosition.z);
     rotateY(radians(yAngle));
     shape(collectableShape[coll]);
     popMatrix();
   }
 
-  void setupEffect (int collectable, color col) {
-    points[0] = new PVector(collectablePosition[collectable].x - 20, collectablePosition[collectable].y + 20);
-    points[1] = new PVector(collectablePosition[collectable].x + 30, collectablePosition[collectable].y - 30);
-    points[2] = new PVector(collectablePosition[collectable].x - 40, collectablePosition[collectable].y + 20);
-    points[3] = new PVector(collectablePosition[collectable].x + 50, collectablePosition[collectable].y - 30);
-    
+  void setupEffect (color col) {
+    points[0] = new PVector(collectablePosition.x + 70 , collectablePosition.y + 50, collectablePosition.z);
+    points[1] = new PVector(collectablePosition.x - 70, collectablePosition.y + 50, collectablePosition.z);
+    points[2] = new PVector(collectablePosition.x, collectablePosition.y + 50, collectablePosition.z + 70);
+    points[3] = new PVector(collectablePosition.x, collectablePosition.y + 50, collectablePosition.z - 70);
+
     controlPoints = new PVector[numPoints];
     coefficient = new PVector[numPoints];
 
@@ -59,10 +59,12 @@ class Collectable {
     effectColor = col;
   }
 
-  void claculateCoefficient() {
+  void calculateCoefficient() {
     // C0 = P0
     coefficient[0].x = controlPoints[0].x;
     coefficient[0].y = controlPoints[0].y;
+    coefficient[0].z = controlPoints[0].z;
+
 
     // C1 = -5.5P0 + 9P1 - 4.5P2 + P3
     coefficient[1].x =
@@ -75,6 +77,12 @@ class Collectable {
       9 * controlPoints[1].y +
       -4.5 * controlPoints[2].y +
       controlPoints[3].y;
+    coefficient[1].z =
+      -5.5 * controlPoints[0].z +
+      9 * controlPoints[1].z +
+      -4.5 * controlPoints[2].z +
+      controlPoints[3].z;
+
 
     // C2 = 9P0 - 22.5P1 + 18P2 - 4.5P3
     coefficient[2].x =
@@ -87,6 +95,11 @@ class Collectable {
       -22.5 * controlPoints[1].y
       +18.0 * controlPoints[2].y
       -4.5 * controlPoints[3].y;
+    coefficient[2].z =
+      9.0 * controlPoints[0].z
+      -22.5 * controlPoints[1].z
+      +18.0 * controlPoints[2].z
+      -4.5 * controlPoints[3].z;
 
     // C3 = -4.5P0 + 13.5P1 - 13.5P2 + 4.5P3
     coefficient[3].x =
@@ -99,10 +112,15 @@ class Collectable {
       +13.5 * controlPoints[1].y
       -13.5 * controlPoints[2].y
       +4.5 * controlPoints[3].y;
+    coefficient[3].z =
+      -4.5 * controlPoints[0].z
+      +13.5 * controlPoints[1].z
+      -13.5 * controlPoints[2].z
+      +4.5 * controlPoints[3].z;
   }
 
   void drawEffect() {
-    float x, y;
+    float x, y, z;
 
     strokeWeight(5);
     stroke(effectColor);
@@ -119,8 +137,12 @@ class Collectable {
         + coefficient[2].y * u * u
         + coefficient[3].y * u * u * u;
 
+      z = coefficient[0].z + coefficient[1].z * u
+        + coefficient[2].z * u * u
+        + coefficient[3].z * u * u * u;
+
       // Pintamos el punto
-      point(x, y);
+      point(x, y, z);
     }
   }
 }
