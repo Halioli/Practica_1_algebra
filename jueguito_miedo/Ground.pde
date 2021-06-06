@@ -1,5 +1,5 @@
-static int totalRows = 100;
-static int totalCols = 100;
+static int totalRows = 300;
+static int totalCols = 300;
 PShape[][] globes = new PShape[totalRows][totalCols];
 
 PImage groundImage; 
@@ -18,12 +18,12 @@ void setupGround(int numR, int numC) {
   }
 }
 
-void drawGround(int numR, int numC, int numLastI, int numLastJ, int coordX, int coordY, int coordZ) {
+void drawGround(int numR, int numC, int coordX, int coordY, int coordZ) {
   pushMatrix();
   rotateX(radians(90));
   translate(coordX, coordY, coordZ);
-  for (int i = numLastI; i < numR; i++) {
-    for (int j = numLastJ; j < numC; j++) {
+  for (int i = 0; i < numR; i++) {
+    for (int j = 0; j < numC; j++) {
       shape(globes[i][j]);
     }
   }

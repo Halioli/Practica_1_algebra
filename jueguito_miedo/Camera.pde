@@ -17,14 +17,13 @@ class FPCamera {
   }
 
   void camTransformations() {
-
     pushMatrix();
     translate(cameraLocation.x, cameraLocation.y, cameraLocation.z);
 
     // Side to side movement
     rotateY(-mouseX*0.005);
-    //noFill();
-    //noStroke();
+    noFill();
+    noStroke();
     box(100);
     translate(0, 0, -200);
     float x = modelX(0, 0, 0);
@@ -44,9 +43,9 @@ class FPCamera {
 
 
     camera(cameraLocation.x, cameraLocation.y, cameraLocation.z, x, y, z, 0, 1, 0);
-    println(x);
-    println(y);
-    println(z);
+    println("X: "+x);
+    println("Y: "+y);
+    println("Z: "+z);
 
     // Move Forward when pressing W.
     if (keyPressed) {

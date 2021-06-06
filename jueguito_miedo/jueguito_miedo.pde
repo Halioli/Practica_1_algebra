@@ -7,19 +7,30 @@ FPCamera camera;
 EnemyOscar oscar;
 //Collectables
 Collectable[] collectables = new Collectable[7];
+Wall[] wallsVertical = new Wall[100];
+Wall[] wallsHorizontal= new Wall[100];
+
+boolean enemyCollided = false;
+
 //Walls
-Wall[] walls = new Wall[100];
-int numW = 40;
+int numW = 300;
+int currentWall = 0;
+
 
 // FUNCTIONS
 void setup() {
   size(1200, 800, P3D); 
   // Instantiate camera
   camera = new FPCamera();
-  oscar = new EnemyOscar();
-  for (int i = 0; i < numW; i++) {
-    walls[i] = new Wall();
-    walls[i].setupWalls(40);
+  oscar = new EnemyOscar(1000);
+
+  for (int i = 0; i < wallsVertical.length; i++) {
+    wallsVertical[i] = new Wall();
+    wallsVertical[i].setupWallsVertical();
+  }
+  for (int i = 0; i < wallsHorizontal.length; i++) {
+    wallsHorizontal[i] = new Wall();
+    wallsHorizontal[i].setupWallsHorizontal();
   }
   // Load image
   setupGround(9, 10); 
@@ -28,11 +39,9 @@ void setup() {
 
   for (int i=0; i < collectables.length; i++) {
     collectables[i] = new Collectable(i);
-  }
-
-  for (int i = 0; i < collectables.length; i++) {
     collectables[i].setupCollectables(i);
   }
+
   noStroke();
 
   //Set cursor invisible
@@ -45,9 +54,12 @@ void setup() {
 void draw() {
   lights();
   background(0);
-  camera.camTransformations();
+  if (!enemyCollided) {
+    camera.camTransformations();
+  } else {
+  }
 
-  //oscar.drawOscar();
+  oscar.drawOscar();
 
   for (int i = 0; i < collectables.length; i++) {
     collectables[i].updateColl();
@@ -56,14 +68,55 @@ void draw() {
 
   // Draw the environment
   //  - (Ground)
-  drawGround(9, 10, 0, 0, 0, 400, -600);
-  drawGround(9, 10, 0, 0, 0, 400, -300);
+  drawGround(9, 10, 0, 400, -600);
+  drawGround(9, 10, 0, 400, -300);
 
   // - Walls
-  walls[0].drawWalls(1, 0, -400, 450, 60, 90);
-  walls[1].drawWalls(5, 0, 0, 450, 650, 0);
-  walls[2].drawWalls(4, 0, 300, 450, 650, 0);
-  walls[3].drawWalls(4, 0, -2400, 450, 530, 90);
-  walls[4].drawWalls(4, 0, -2800, 450, 250, 90);
-  walls[5].drawWalls(5, 0, 0, 450, 650, 0);
+  for (int i = 0; i < 1; i++) {
+    wallsHorizontal[i].drawWallHorizontal(50, 450, 400, i);
+  }
+
+  for (int i = currentWall; i < currentWall + 5; i++) {
+    wallsVertical[i].drawWallVertical(0, 450, 650, i);
+  }
+
+  for (int i = currentWall; i < currentWall + 4; i++) {
+    wallsVertical[i].drawWallVertical(300, 450, 650, i);
+  }
+
+  for (int i = currentWall; i < currentWall + 4; i++) {
+    wallsHorizontal[i].drawWallHorizontal(-2400, 450, 530, i);
+  }
+
+  for (int i = currentWall; i < currentWall + 4; i++) {
+    wallsHorizontal[i].drawWallHorizontal(520, 450, 2400, i);
+  }
+
+  for (int i = currentWall; i < currentWall + 5; i++) {
+    wallsHorizontal[i].drawWallHorizontal(250, 450, 2800, i);
+  }
+
+
+  for (int i = currentWall; i < currentWall + 3; i++) {
+    wallsHorizontal[i].drawWallVertical(2250, 450, 1150, i);
+  }
+
+  for (int i = currentWall; i < currentWall + 3; i++) {
+    wallsHorizontal[i].drawWallVertical(2500, 450, 3030, i);
+  }
+
+  for (int i = currentWall; i < currentWall + 7; i++) {
+    wallsHorizontal[i].drawWallVertical(2800, 450, 1550, i);
+  }
+
+  for (int i = currentWall; i < currentWall + 4; i++) {
+    wallsHorizontal[i].drawWallHorizontal(770, 450, 4300, i);
+  }
+
+  for (int i = currentWall; i < currentWall + 3; i++) {
+    wallsHorizontal[i].drawWallVertical(770, 450, 4300, i);
+  }
+  for (int i = currentWall; i < currentWall + 4; i++) {
+    wallsHorizontal[i].drawWallHorizontal(770, 450, 5500, i);
+  }
 }
