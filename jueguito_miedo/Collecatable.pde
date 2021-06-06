@@ -40,10 +40,10 @@ class Collectable {
   }
 
   void setupEffect (color col) {
-    points[0] = new PVector(collectablePosition.x + 70 , collectablePosition.y + 50, collectablePosition.z);
-    points[1] = new PVector(collectablePosition.x - 70, collectablePosition.y + 50, collectablePosition.z);
-    points[2] = new PVector(collectablePosition.x, collectablePosition.y + 50, collectablePosition.z + 70);
-    points[3] = new PVector(collectablePosition.x, collectablePosition.y + 50, collectablePosition.z - 70);
+    points[0] = new PVector(collectablePosition.x + 70, collectablePosition.y + 50, collectablePosition.z);
+    points[1] = new PVector(collectablePosition.x - 70, collectablePosition.y, collectablePosition.z);
+    points[2] = new PVector(collectablePosition.x, collectablePosition.y, collectablePosition.z + 70);
+    points[3] = new PVector(collectablePosition.x, collectablePosition.y - 50, collectablePosition.z - 70);
 
     controlPoints = new PVector[numPoints];
     coefficient = new PVector[numPoints];
