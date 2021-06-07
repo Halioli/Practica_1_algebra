@@ -2,6 +2,7 @@ class BezierCurve {
   // Atributos
   PVector[] controlPoints;
   PVector[] coefficients;
+  PVector[] points;
   color curveColor;
 
   // Constructor
@@ -17,6 +18,12 @@ class BezierCurve {
       controlPoints[i] = point[i];
     }
     curveColor = cColor;
+
+    points = new PVector[4];
+    points[0] = new PVector(200, 200);
+    points[1] = new PVector(300, 300);
+    points[2] = new PVector(400, 200);
+    points[3] = new PVector(500, 300);
   }
 
   // Methods
