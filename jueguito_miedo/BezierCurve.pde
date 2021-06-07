@@ -6,21 +6,21 @@ class BezierCurve {
   color curveColor = color(0, 255, 0);
 
   // Constructor
-  BezierCurve() {
-    controlPoints = new PVector[4];
-    coefficients = new PVector[4];
+  BezierCurve(PVector p) {
+    controlPoints = new PVector[5];
+    coefficients = new PVector[5];
 
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < 5; i++) {
       // Initialize
       controlPoints[i] = new PVector(0.0, 0.0, 0.0);
       coefficients[i] = new PVector(0.0, 0.0, 0.0);
     }
 
     controlPoints = new PVector[4];
-    controlPoints[0] = new PVector(200, 200, 100);
-    controlPoints[1] = new PVector(300, 300, 100);
-    controlPoints[2] = new PVector(400, 200, 100);
-    controlPoints[3] = new PVector(500, 300, 100);
+    controlPoints[0] = new PVector(p.x - 70, p.y - 50, p.z);
+    controlPoints[1] = new PVector(p.x + 70, p.y, p.z);
+    controlPoints[2] = new PVector(p.x, p.y, p.z - 70);
+    controlPoints[3] = new PVector(p.x, p.y + 50, p.z + 70);
   }
 
   // Methods

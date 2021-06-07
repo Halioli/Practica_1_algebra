@@ -8,7 +8,7 @@ FPCamera camera;
 EnemyOscar oscar;
 
 // Bezier's Curve
-BezierCurve bezierCurve;
+BezierCurve[] bezierCurve;
 
 // Collectables
 Collectable[] collectables = new Collectable[5];
@@ -28,10 +28,6 @@ void setup() {
   // Instantiate camera
   camera = new FPCamera();
   oscar = new EnemyOscar(1000);
-  
-  // Bezier curve
-  bezierCurve = new BezierCurve();
-  bezierCurve.calculateCoefficents();
 
   for (int i = 0; i < wallsVertical.length; i++) {
     wallsVertical[i] = new Wall();
@@ -41,7 +37,7 @@ void setup() {
     wallsHorizontal[i] = new Wall();
     wallsHorizontal[i].setupWallsHorizontal();
   }
-  
+
   // Load image
   setupGround(30, 30); 
 
@@ -57,8 +53,14 @@ void setup() {
 
   for (int i=0; i < collectables.length; i++) {
     collectables[i].setupCollectables(i);
-    collectables[i].setupEffect(color(255,0,0));
+    
+    // Setup parametric interpolation curve
+    collectables[i].setupEffect(color(255, 0, 0));
     collectables[i].calculateCoefficient();
+    
+    // Setup Bezier's curve
+    bezierCurve[i] = new BezierCurve(collectables[i].collectablePosition);
+    bezierCurve[i].calculateCoefficents();
   }
 
   noStroke();
@@ -77,18 +79,20 @@ void draw() {
     camera.camTransformations();
   } else {
   }
-  
+
   // Draw Oscar
   oscar.drawOscar();
-  
-  // Draw Bezier
-  bezierCurve.drawCurve();
 
   // Draw collectables and update rotation
   for (int i = 0; i < collectables.length; i++) {
     collectables[i].updateCollect();
     collectables[i].drawCollectables(i);
+    
+    // Draw parametric interpolation
     collectables[i].drawEffect();
+
+    // Draw Bezier
+    bezierCurve[i].drawCurve();
   }
 
   // Draw the environment
