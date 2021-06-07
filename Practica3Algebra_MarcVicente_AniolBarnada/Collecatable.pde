@@ -9,12 +9,16 @@ class Collectable {
   float rotationSpeed;
   float yAngle;
 
+  boolean pickable = false;
+  float minDistance = 1;
+  
   // Effect (Parametric Interpolation Curve)
   int numPoints = 4;
   PVector[] controlPoints;
   PVector[] coefficient;
   color effectColor;
   PVector points[] = new PVector[numPoints];
+
 
   Collectable (float x, float z) {
     collectablePosition = new PVector(x, 450.0, z);
@@ -36,7 +40,7 @@ class Collectable {
     translate(collectablePosition.x, collectablePosition.y, collectablePosition.z);
     rotateY(radians(yAngle));
     shape(collectableShape[coll]);
-    popMatrix();
+    popMatrix(); 
   }
 
   void setupEffect (color col) {
@@ -141,6 +145,30 @@ class Collectable {
 
       // Draw the point
       point(x, y, z);
+    }
+  }
+
+  void pickCollectable() {
+    PVector vectorCollectable = new PVector(0.0, 0.0, 0.0);
+    float moduleCollectable;
+
+    vectorCollectable.x = camera.cameraLocation.x - collectablePosition.x;
+    vectorCollectable.y = camera.cameraLocation.y - collectablePosition.y;
+    vectorCollectable.z = camera.cameraLocation.z - collectablePosition.z;
+
+    // Normalize the vector
+    moduleCollectable = sqrt(vectorCollectable.x * vectorCollectable.x + vectorCollectable.y * vectorCollectable.y + vectorCollectable.z * vectorCollectable.z);
+
+    if (moduleCollectable <= minDistance) {
+      pickable = true;
+      println("pickable");
+    } else {
+      pickable = false;
+    } 
+    if (keyPressed) {
+      if (key == 'e' || key == 'E') {
+        collectablePosition = new PVector(0.0, 0.0, 0.0);
+      }
     }
   }
 }

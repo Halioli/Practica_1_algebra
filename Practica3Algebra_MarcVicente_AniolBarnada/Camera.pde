@@ -29,7 +29,7 @@ class FPCamera {
     float x = modelX(0, 0, 0);
     float y = modelY(0, 0, 0);
     float z = modelZ(0, 0, 0);
-    
+
     minX = cameraLocation.x - 50;
     maxX = cameraLocation.x + 50;
     minZ = cameraLocation.z - 50;
@@ -60,28 +60,27 @@ class FPCamera {
 
           // Velocity changes according to acceleration
           velocity.add(acceleration);
-          
+
           // Limit the velocity by topspeed
           velocity.limit(topSpeed);
-          
+
           // Location changes by velocity
           cameraLocation.add(velocity);
-          
         } else if (key == 's' || key == 'S') {
           // Compute a vector that points from location to mouse.
           //PVector targetPosition = new PVector(x, y, z);
           PVector targetPosition = new PVector(x, cameraLocation.y, z);
           PVector acceleration = PVector.sub(targetPosition, cameraLocation);
-          
+
           // Set magnitude of acceleration
           acceleration.setMag(-5);
 
           // Velocity changes according to acceleration
           velocity.add(acceleration);
-          
+
           // Limit the velocity by topspeed
           velocity.limit(topSpeed);
-          
+
           // Location changes by velocity
           cameraLocation.add(velocity);
         }

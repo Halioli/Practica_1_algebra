@@ -13,8 +13,8 @@ class EnemyOscar {
   float maxX, minX, maxZ, minZ;
   float minDistance;
   
-  EnemyOscar(float minD) {
-    enemyPosition = new PVector(0.0, 450.0, 0.0);
+  EnemyOscar(float minD, float x, float z) {
+    enemyPosition = new PVector(x, 450.0, z);
     speedEnemy = new PVector(3.0, 0.0, 3.0);
     vectorEnemy = new PVector(0.0, 0.0, 0.0);
     collided = false;

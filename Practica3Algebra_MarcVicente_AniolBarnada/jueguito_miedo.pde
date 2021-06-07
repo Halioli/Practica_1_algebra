@@ -5,10 +5,10 @@
 FPCamera camera;
 
 // Enemy
-EnemyOscar oscar;
+EnemyOscar oscar[] = new EnemyOscar[4];
 
 // Bezier's Curve
-BezierCurve[] bezierCurve;
+BezierCurve[] bezierCurve = new BezierCurve[5];
 
 // Collectables
 Collectable[] collectables = new Collectable[5];
@@ -27,7 +27,13 @@ void setup() {
 
   // Instantiate camera
   camera = new FPCamera();
-  oscar = new EnemyOscar(1000);
+
+  //Instantiate enemies
+  oscar[0] = new EnemyOscar(1000, 0, 0);
+  oscar[1] = new EnemyOscar(300, 2800, 5900);
+  oscar[2] = new EnemyOscar(200, 4300, 4886);
+  oscar[3] = new EnemyOscar(200, 5300, 2600);
+
 
   for (int i = 0; i < wallsVertical.length; i++) {
     wallsVertical[i] = new Wall();
@@ -42,7 +48,9 @@ void setup() {
   setupGround(30, 30); 
 
   // Oscar Setup
-  oscar.setupOscar();
+  for (int i=0; i < oscar.length; i++) {
+    oscar[i].setupOscar();
+  }
 
   collectables[0] = new Collectable(1000, 5000);
   collectables[1] = new Collectable(4800, 6200);
@@ -53,11 +61,11 @@ void setup() {
 
   for (int i=0; i < collectables.length; i++) {
     collectables[i].setupCollectables(i);
-    
+
     // Setup parametric interpolation curve
     collectables[i].setupEffect(color(255, 0, 0));
     collectables[i].calculateCoefficient();
-    
+
     // Setup Bezier's curve
     bezierCurve[i] = new BezierCurve(collectables[i].collectablePosition);
     bezierCurve[i].calculateCoefficents();
@@ -81,13 +89,21 @@ void draw() {
   }
 
   // Draw Oscar
-  oscar.drawOscar();
+  for (int i = 0; i < oscar.length; i++) {
+    oscar[i].drawOscar();
+  }
 
   // Draw collectables and update rotation
   for (int i = 0; i < collectables.length; i++) {
+    //Update rotation collectable
     collectables[i].updateCollect();
+
+    //Draw collectables
     collectables[i].drawCollectables(i);
-    
+
+    //Update if collectable is gonna be picked
+    //collectables[i].pickCollectable(); NOT WORKING
+
     // Draw parametric interpolation
     collectables[i].drawEffect();
 
