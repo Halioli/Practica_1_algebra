@@ -4,31 +4,34 @@
 // Camera
 FPCamera camera;
 
-//Enemy
+// Enemy
 EnemyOscar oscar;
 
 // Bezier's Curve
 BezierCurve bezierCurve;
 
-//Collectables
+// Collectables
 Collectable[] collectables = new Collectable[5];
 Wall[] wallsVertical = new Wall[100];
 Wall[] wallsHorizontal= new Wall[100];
 
 boolean enemyCollided = false;
 
-//Walls
+// Walls
 int numW = 300;
 int currentWall = 0;
 
-
 // FUNCTIONS
 void setup() {
-  size(1200, 800, P3D); 
+  size(1200, 800, P3D);
 
   // Instantiate camera
   camera = new FPCamera();
   oscar = new EnemyOscar(1000);
+  
+  // Bezier curve
+  bezierCurve = new BezierCurve();
+  bezierCurve.calculateCoefficents();
 
   for (int i = 0; i < wallsVertical.length; i++) {
     wallsVertical[i] = new Wall();
@@ -72,17 +75,20 @@ void draw() {
     camera.camTransformations();
   } else {
   }
-  //Draw oscar
+  // Draw Oscar
   //oscar.drawOscar();
+  
+  // Draw Bezier
+  bezierCurve.drawCurve();
 
-  //Draw collectables and update rotation
+  // Draw collectables and update rotation
   for (int i = 0; i < collectables.length; i++) {
     collectables[i].updateCollect();
     collectables[i].drawCollectables(i);
     collectables[i].drawEffect();
   }
 
-  //Draw the environment
+  // Draw the environment
   drawEnvironment();
   
   

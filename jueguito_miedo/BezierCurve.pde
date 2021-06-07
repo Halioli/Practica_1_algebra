@@ -3,10 +3,10 @@ class BezierCurve {
   PVector[] controlPoints;
   PVector[] coefficients;
   PVector[] points;
-  color curveColor;
+  color curveColor = color(0, 255, 0);
 
   // Constructor
-  BezierCurve (PVector[] point, color cColor) {
+  BezierCurve() {
     controlPoints = new PVector[4];
     coefficients = new PVector[4];
 
@@ -14,20 +14,17 @@ class BezierCurve {
       // Initialize
       controlPoints[i] = new PVector(0.0, 0.0, 0.0);
       coefficients[i] = new PVector(0.0, 0.0, 0.0);
-
-      controlPoints[i] = point[i];
     }
-    curveColor = cColor;
 
-    points = new PVector[4];
-    points[0] = new PVector(200, 200);
-    points[1] = new PVector(300, 300);
-    points[2] = new PVector(400, 200);
-    points[3] = new PVector(500, 300);
+    controlPoints = new PVector[4];
+    controlPoints[0] = new PVector(200, 200, 100);
+    controlPoints[1] = new PVector(300, 300, 100);
+    controlPoints[2] = new PVector(400, 200, 100);
+    controlPoints[3] = new PVector(500, 300, 100);
   }
 
   // Methods
-  void calcular_coefficients() {
+  void calculateCoefficents() {
     // C0 = P0
     coefficients[0].x = controlPoints[0].x;
     coefficients[0].y = controlPoints[0].y;
@@ -76,7 +73,7 @@ class BezierCurve {
       controlPoints[3].z;
   }
 
-  void pintar_curva() {
+  void drawCurve() {
     float x, y, z;
 
     strokeWeight(5);
