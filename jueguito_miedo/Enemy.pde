@@ -8,7 +8,6 @@ class EnemyOscar {
   PVector speedEnemy = new PVector();
   PVector vectorEnemy = new PVector();
 
-
   boolean collided;
 
   float maxX, minX, maxZ, minZ;
@@ -62,15 +61,16 @@ class EnemyOscar {
         enemyPosition.y += vectorEnemy.y;
         enemyPosition.z += vectorEnemy.z;
 
-        //Apply vectors
+        // Apply vectors
         pushMatrix();
         translate(enemyPosition.x, enemyPosition.y, enemyPosition.z);
         shape(oscarShape);
         popMatrix();
       }
-      //Check collisions with Player
+      // Check collisions with Player
       getMinMaxOscar((int)enemyPosition.x, (int)enemyPosition.z);
       enemyCollision();
+      
     } else {
       enemyPosition = new PVector(camera.cameraLocation.x + 20, camera.cameraLocation.y, camera.cameraLocation.z + 20);
       pushMatrix();

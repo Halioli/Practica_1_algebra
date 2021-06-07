@@ -41,10 +41,12 @@ void setup() {
     wallsHorizontal[i] = new Wall();
     wallsHorizontal[i].setupWallsHorizontal();
   }
+  
   // Load image
   setupGround(30, 30); 
 
-  //oscar.setupOscar();
+  // Oscar Setup
+  oscar.setupOscar();
 
   collectables[0] = new Collectable(1000, 5000);
   collectables[1] = new Collectable(4800, 6200);
@@ -75,8 +77,9 @@ void draw() {
     camera.camTransformations();
   } else {
   }
+  
   // Draw Oscar
-  //oscar.drawOscar();
+  oscar.drawOscar();
   
   // Draw Bezier
   bezierCurve.drawCurve();
@@ -90,6 +93,4 @@ void draw() {
 
   // Draw the environment
   drawEnvironment();
-  
-  
 }

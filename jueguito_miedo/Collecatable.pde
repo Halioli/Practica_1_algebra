@@ -65,7 +65,6 @@ class Collectable {
     coefficient[0].y = controlPoints[0].y;
     coefficient[0].z = controlPoints[0].z;
 
-
     // C1 = -5.5P0 + 9P1 - 4.5P2 + P3
     coefficient[1].x =
       -5.5 * controlPoints[0].x +
@@ -82,7 +81,6 @@ class Collectable {
       9 * controlPoints[1].z +
       -4.5 * controlPoints[2].z +
       controlPoints[3].z;
-
 
     // C2 = 9P0 - 22.5P1 + 18P2 - 4.5P3
     coefficient[2].x =

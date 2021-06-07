@@ -1,13 +1,13 @@
-void drawEnvironment(){
-  
+void drawEnvironment() {
+
   //  - (Ground)
-  //drawGround(30, 30, 0, 400, -600);
-  //drawGround(30, 30, 0, 400, -300);
-  
-// - Walls
-  //for (int i = 0; i < 1; i++) {
-  //  wallsHorizontal[i].drawWallHorizontal(50, 450, 400, i);
-  //}
+  drawGround(30, 30, 0, 400, -600);
+  drawGround(30, 30, 0, 400, -300);
+
+  // - Walls
+  for (int i = 0; i < 1; i++) {
+    wallsHorizontal[i].drawWallHorizontal(50, 450, 400, i);
+  }
 
   for (int i = currentWall; i < currentWall + 5; i++) {
     wallsVertical[i].drawWallVertical(0, 450, 650, i);
@@ -91,20 +91,20 @@ void drawEnvironment(){
   for (int i = currentWall; i < currentWall + 7; i++) {
     wallsHorizontal[i].drawWallHorizontal(2450, 450, 900, i);
   }
-  
+
   for (int i = currentWall; i < currentWall + 2; i++) {
     wallsHorizontal[i].drawWallVertical(4700, 450, 900, i);
   }
-  
+
   for (int i = currentWall; i < currentWall + 5; i++) {
     wallsHorizontal[i].drawWallVertical(4700, 450, 2300, i);
   }
-  
+
   for (int i = currentWall; i < currentWall + 2; i++) {
     wallsHorizontal[i].drawWallHorizontal(4950, 450, 2900, i);
   }
-  
+
   for (int i = currentWall; i < currentWall + 5; i++) {
     wallsHorizontal[i].drawWallVertical(5700, 450, 1150, i);
-  }  
+  }
 }

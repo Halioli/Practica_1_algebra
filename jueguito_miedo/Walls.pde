@@ -42,6 +42,7 @@ class Wall {
     pushMatrix();
     translate(coordX, coordY, coordZ + (wallSize) * nW);
     wallPosition =new  PVector(coordX, coordY, coordZ);
+    
     //box(41,301,wallSize + 1);
     shape(wallShapeVertical);
     popMatrix();
@@ -54,6 +55,7 @@ class Wall {
     pushMatrix();
     translate(coordX + (wallSize) * nW, coordY, coordZ );
     wallPosition =new  PVector(coordX, coordY, coordZ);
+    
     //box(41,301,wallSize + 1);
     shape(wallShapeHorizontal);
     popMatrix();
@@ -92,6 +94,7 @@ class Wall {
       if (minX <= camera.maxX - 60) {
         newSpeedV = new PVector(10.0, 0.0, 0.0);
         camera.cameraLocation.x += newSpeedV.x;
+        
       } else if (maxX >= camera.minX + 60) {
         newSpeedV = new PVector(10.0, 0.0, 0.0);
         camera.cameraLocation.x -= newSpeedV.x;
